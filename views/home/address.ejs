@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .form-title {
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .address-card {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="address-card">
+                    <div class="form-title">
+                        <h2>Manage Your Address</h2>
+                    </div>
+                    <form id="addressForm">
+                        <div class="form-group">
+                            <label for="firstname">First Name</label>
+                            <input type="text" class="form-control" id="firstname" name="firstname" 
+                                pattern="[A-Z][a-zA-Z]*" 
+                                title="First name must start with a capital letter and contain only alphabets" 
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname">Last Name</label>
+                            <input type="text" class="form-control" id="lastname" name="lastname" 
+                                pattern="[A-Z][a-zA-Z]*" 
+                                title="Last name must start with a capital letter and contain only alphabets" 
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" class="form-control" id="city" name="city" 
+                                pattern="[A-Z][a-zA-Z ]*" 
+                                title="City must start with a capital letter and contain only alphabets" 
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State</label>
+                            <input type="text" class="form-control" id="state" name="state" 
+                                pattern="[A-Z][a-zA-Z ]*" 
+                                title="State must start with a capital letter and contain only alphabets" 
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pincode">Pin Code</label>
+                            <input type="text" class="form-control" id="pincode" name="pincode" 
+                                pattern="\d{6}" 
+                                title="Pincode must be exactly 6 digits" 
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="text" class="form-control" id="phone" name="phone" 
+                                pattern="\d{10}" 
+                                title="Phone number must be exactly 10 digits" 
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block">Save Address</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('addressForm').addEventListener('submit', async function (e) {
+            e.preventDefault(); // Prevent default form submission
+    
+            const form = e.target;
+            const data = {
+                firstname: form.firstname.value.trim(),
+                lastname: form.lastname.value.trim(),
+                city: form.city.value.trim(),
+                state: form.state.value.trim(),
+                pincode: form.pincode.value.trim(),
+                phone: form.phone.value.trim()
+            };
+    
+            // Validation checks
+            if (!/^[A-Z][a-zA-Z]*$/.test(data.firstname)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Input',
+                    text: 'First Name must start with a capital letter and contain only alphabets.',
+                });
+                return;
+            }
+            if (!/^[A-Z][a-zA-Z]*$/.test(data.lastname)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Input',
+                    text: 'Last Name must start with a capital letter and contain only alphabets.',
+                });
+                return;
+            }
+            if (!/^[A-Z][a-zA-Z ]*$/.test(data.city)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Input',
+                    text: 'City must start with a capital letter and contain only alphabets.',
+                });
+                return;
+            }
+            if (!/^[A-Z][a-zA-Z ]*$/.test(data.state)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Input',
+                    text: 'State must start with a capital letter and contain only alphabets.',
+                });
+                return;
+            }
+            if (!/^\d{6}$/.test(data.pincode)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Input',
+                    text: 'Pin Code must be exactly 6 digits.',
+                });
+                return;
+            }
+            if (!/^\d{10}$/.test(data.phone)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Input',
+                    text: 'Phone Number must be exactly 10 digits.',
+                });
+                return;
+            }
+    
+            try {
+                // Send data to the server via POST
+                const response = await fetch('/save-address', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+    
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Address saved successfully!',
+                    }).then(() => {
+                        window.location.href = '/profile'; 
+                    });
+                } else {
+                    const errorData = await response.json();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to save address: ' + (errorData.message || 'Server error.'),
+                    });
+                }
+            } catch (error) {
+                console.error('Error saving address:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while saving the address. Please try again.',
+                });
+            }
+        });
+    </script>
+</body>
+</html>

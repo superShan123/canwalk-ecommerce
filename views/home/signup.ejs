@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/signup.css">
+    <title>Create an Account</title>
+</head>
+<body>
+    <div class="container">
+        <div class="signup-form">
+            <h1>Create an Account</h1>
+
+            <!-- Error message container -->
+            <div id="error-message" style="color: red; text-align: center; margin-bottom: 15px; display: none;"></div>
+
+            <form id="signupForm" action="/signup" method="POST">
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="email" name="email" placeholder="Email" required   >
+                <input type="password" name="password" placeholder="Password" required minlength="6">
+                <input type="password" name="confirmPassword" placeholder="Confirm Password" required minlength="6">
+                <button type="submit">Sign Up</button>
+            </form>
+
+            <p>Already have an account? <a href="/login">Login</a></p>
+        </div>
+        <div class="illustration">
+            <img src="/img/ob4.png" alt="Illustration" style="width: 100%; height: auto;">
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('signupForm');
+        const errorMessage = document.getElementById('error-message');
+
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+
+            if(!passwordRegex.test(data.password)){
+                errorMessage.textContent = "Password must contain at least one letter, one number, one special character, and no spaces. Minimum 6 characters.";
+            errorMessage.style.display = "block";
+            return;
+            }
+
+            // Client-side validation for password match
+            if (data.password !== data.confirmPassword) {
+                errorMessage.textContent = "Passwords do not match.";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            try {
+                // Submit form data via AJAX
+                const response = await fetch('/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Redirect on successful signup
+                    window.location.href = '/otp';
+                } else {
+                    // Display errors at the top
+                    errorMessage.textContent = result.error || "An error occurred.";
+                    errorMessage.style.display = "block";
+                }
+            } catch (err) {
+                console.error("Error:", err);
+                errorMessage.textContent = "An error occurred. Please try again.";
+                errorMessage.style.display = "block";
+            }
+        });
+    </script>
+</body>
+</html>

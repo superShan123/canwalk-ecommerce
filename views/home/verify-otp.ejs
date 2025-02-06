@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP</title>
+    <link rel="stylesheet" href="/css/otp-verification.css">
+</head>
+<body>
+    <style>
+/* Reset default styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f1f3f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Container styling */
+.otp-container {
+    width: 100%;
+    max-width: 400px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    text-align: center;
+}
+
+/* Heading */
+.otp-box h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: #212121;
+}
+
+/* Input Group */
+.input-group {
+    margin: 1rem 0;
+    position: relative;
+}
+
+.input-group input[type="text"] {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: 1px solid #dfe1e5;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+    outline: none;
+}
+
+.input-group input[type="text"]:focus {
+    border-color: #2874f0;
+    box-shadow: 0px 0px 4px rgba(40, 116, 240, 0.4);
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #ffffff;
+    background-color: #2874f0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #1a5eb0;
+}
+
+/* Extra Options */
+.extra-options {
+    margin-top: 1rem;
+}
+
+.extra-options a {
+    color: #2874f0;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.extra-options a:hover {
+    text-decoration: underline;
+}
+
+.error-message{
+    margin-bottom: 1rem;
+    color: #d32f2f;
+    font-size: 0.9rem;
+    font-weight: bold 
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 400px) {
+    .otp-container {
+        margin: 0 1rem;
+    }
+}
+
+
+    </style>
+
+    <div class="otp-container">
+        <div class="otp-box">
+            <h2>OTP Verification</h2>
+            <% if(locals.error!== null && typeof locals.error !== 'undefined'){ %> 
+                <div class="error-message" style="color: red; font-size: 0.9rem; margin-bottom: 1rem;">
+                    <%=error%>
+                </div>
+                <% } %>
+            <form action="/otp-verify" method="POST">
+                <div class="input-group">
+                    <input type="text" name="otp" required placeholder="Enter the OTP">
+                </div>
+                <button type="submit" class="submit-btn">Verify OTP</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

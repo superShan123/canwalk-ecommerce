@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f7fc;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #34495e;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        table th {
+            background-color: #34495e;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Order Details</h1>
+        <h3>Order Information</h3>
+        <table>
+            <tr>
+                <th>Order ID</th>
+                <td><%= order._id %></td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td><%= order.orderStatus %></td>
+            </tr>
+        </table>
+
+        <table>
+
+        </table>
+
+        <h3>Customer Information</h3>
+        <table>
+            <tr>
+                <th>Name</th>
+                <td><%= order.shippingAddress.FirstName %> <%= order.shippingAddress.LastName %></td>
+            </tr>
+            <tr>
+                <th>Phone</th>
+                <td><%= order.shippingAddress.phone %></td>
+            </tr>
+        </table>
+
+        <h3>Items Ordered</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% order.items.forEach(item => { %>
+                <tr>
+                    <td><%= item.name %></td> 
+                    <td><%= item.quantity %></td>
+                    <td>₹<%= item.price %></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+
+        <% if (order.orderStatus === 'RETURN' || order.orderStatus === 'RETURNED') { %>
+            <h3>Return Details</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Reason</th>
+                        <th>Product Quality</th>
+                        <th>Service Rating</th>
+                        <th>Additional Feedback</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><%= order.returnDetails && order.returnDetails.reason ? order.returnDetails.reason : 'N/A' %></td>
+                        <td><%= order.returnDetails && order.returnDetails.productQuality ? order.returnDetails.productQuality : 'N/A' %></td>
+                        <td><%= order.returnDetails && order.returnDetails.serviceRating ? order.returnDetails.serviceRating : 'N/A' %></td>
+                        <td><%= order.returnDetails && order.returnDetails.additionalFeedback ? order.returnDetails.additionalFeedback : 'N/A' %></td>
+                        
+                    </tr>
+                </tbody>
+            </table>
+        <% } %>
+
+
+
+        
+    </div>
+</body>
+</html>

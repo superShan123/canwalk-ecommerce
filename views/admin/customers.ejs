@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Management</title>
+    <link rel="stylesheet" href="/css/admincustomer.css"> <!-- Link to the external CSS file -->
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h1>Admin Customers</h1>
+    <ul>
+        <li><a href="/admin/dashboard">Dashboard</a></li>
+        <li><a href="/admin/customers" class="active">Customers</a></li>
+        <li><a href="/admin/product">Products</a></li>
+        <li><a href="/admin/categories">Categories</a></li>
+        <li><a href="/admin/order">Orders</a></li>
+        <li><a href="/admin/coupon">Coupons</a></li>
+        <li><a href="/admin/sales-report">Sales</a></li>
+        <li><a href="/admin/offer">Offers</a></li>
+    </ul>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Header -->
+    <header>
+        <h2>Customers</h2>
+        <div class="admin-info">
+            <span>Admin</span>
+            <a href="/admin/login" class="logout-btn">Logout</a>
+        </div>
+    </header>
+
+
+    <!-- Customers Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Action</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% customerDetails.forEach(customer => { %>
+                <tr id="customer-<%= customer._id %>">
+                    <td><%= customer.username %></td>
+                    <td><%= customer.email %></td>
+                    <td id="status-<%= customer._id %>"><%= customer.status %></td>
+                    <td>
+                        <!-- Simple form to toggle user status -->
+                         
+                        <form action="/admin/toggle-status/<%= customer._id%>" method="POST">
+                            <input type="hidden" name="status" value="<%= customer.status === 'active' ? 'inactive' : 'active' %>">
+                            
+                            <button type="submit">
+                                <%= customer.status === 'active' ? 'Block' : 'Unblock' %>
+                            </button>
+                        </form>
+
+                        
+                        
+                        
+                        
+                    </td>
+                    <td>
+                        <button class="view-details-btn" onclick="openUserDetails('<%= customer._id %>')">View Details</button>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+<div class="pagination">
+    <% if (currentPage > 1) { %>
+        <a href="/admin/customers?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="pagination-btn">Previous</a>
+    <% } %>
+
+    <% for (let i = 1; i <= totalPages; i++) { %>
+        <a href="/admin/customers?page=<%= i %>&limit=<%= limit %>" 
+           class="pagination-btn <%= currentPage === i ? 'active' : '' %>">
+           <%= i %>
+        </a>
+    <% } %>
+
+    <% if (currentPage < totalPages) { %>
+        <a href="/admin/customers?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="pagination-btn">Next</a>
+    <% } %>
+</div>
+
+</div>
+
+<!-- Modal for User Details -->
+<div id="userDetailsModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeUserDetails()">&times;</span>
+        <h3>User Details</h3>
+        <div id="user-details">
+            <!-- User details will be loaded dynamically using JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- Add your script here -->
+<script>
+    // Function to open user details modal
+    function openUserDetails(customerId) {
+        const modal = document.getElementById('userDetailsModal');
+        modal.style.display = 'block'; // Show modal
+        // Fetch and load customer details
+        fetch(`/admin/customer-details/${customerId}`)
+            .then(response => response.json())
+            .then(data => {
+                const userDetailsDiv = document.getElementById('user-details');
+                // Populate the modal with user details (Assume data contains the details)
+                userDetailsDiv.innerHTML = `<p>Username: ${data.username}</p><p>Email: ${data.email}</p><p>Status: ${data.status}</p>`;
+            })
+            .catch(error => console.error('Error fetching user details:', error));
+    }
+
+    // Function to close the modal
+    function closeUserDetails() {
+        const modal = document.getElementById('userDetailsModal');
+        modal.style.display = 'none'; // Hide modal
+    }
+</script>
+
+</body>
+</html>

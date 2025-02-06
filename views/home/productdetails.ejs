@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+   /* Global Styles */
+:root {
+  --primary-color: #2874f0;
+  --secondary-color: #fb641b;
+  --text-primary: #212121;
+  --text-secondary: #424242;
+  --light-gray: #f5f5f5;
+  --border-color: #bdbdbd;
+  --success-color: #43a047;
+  --error-color: #e53935;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--light-gray);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* Navbar Styles */
+.navbar {
+  background-color: white;
+  padding: 1rem 2rem;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-logo img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.canwalk {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background: linear-gradient(45deg, #0891b2, #0284c7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Product Container */
+.product-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin: 50px auto;
+  max-width: 1200px;
+  padding: 30px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  gap: 40px;
+}
+
+/* Product Gallery */
+.product-gallery {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+  display: flex;
+  gap: 20px;
+}
+
+.thumbnail-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.thumbnail {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.thumbnail.active,
+.thumbnail:hover {
+  border-color: var(--primary-color);
+  transform: scale(1.05);
+}
+
+/* Zoom Container */
+.zoom-container {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+}
+
+.zoom-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+
+/* Price Styles */
+.original-price {
+  font-size: 18px;
+  color: var(--error-color);
+  text-decoration: line-through;
+  margin-right: 10px;
+}
+
+.discounted-price {
+  font-size: 24px;
+  color: var(--success-color);
+  font-weight: 700;
+}
+
+.product-details {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+  padding: 20px;
+}
+
+.product-details h1 {
+  font-size: 28px;
+  margin-bottom: 10px; /* Reduced from 20px */
+  color: var(--text-primary);
+}
+
+/* Category and Color Display */
+.product-details p {
+  margin: 8px 0; /* Consistent small margin */
+  line-height: 1.4;
+}
+
+/* Size Selector Adjustments */
+select {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0; /* Reduced margin */
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 16px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+/* Label Spacing */
+label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Category and Color Text */
+strong {
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-right: 4px;
+}
+
+/* Rating Styles */
+.rating-container {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--success-color);
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+.rating-container i {
+  color: #FFD700;
+  margin-right: 4px;
+}
+
+.rating-text {
+  color: white;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+/* Add to Cart Button */
+.add-to-cart {
+  width: 100%;
+  padding: 16px 32px;
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.add-to-cart:hover {
+  background-color: #e05212;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.add-to-cart:active {
+  transform: translateY(0);
+}
+
+/* Highlights Section */
+.highlights ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.highlights ul li {
+  padding: 12px 16px;
+  background-color: var(--light-gray);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.highlights ul li:hover {
+  background-color: #e3f2fd;
+  transform: translateX(5px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .product-container {
+    padding: 20px;
+    margin: 20px;
+  }
+
+  .product-gallery,
+  .product-details {
+    min-width: 100%;
+  }
+
+  .zoom-container {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+}
+
+/* Out of Stock Message */
+.out-of-stock-message {
+  color: var(--error-color);
+  font-weight: bold;
+  text-align: center;
+  padding: 16px;
+  background-color: #ffebee;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+  </style>
+</head>
+
+<%- include('../../partials/header') %>
+
+<body>
+  
+
+
+  <div class="product-container">
+    <% if(message && message.length >0 ){ %>
+      <div class="message-container" style="color: red; font-weight: bold; margin-bottom: 20px"></div>
+      <%= message %>
+<% } %>
+
+ <% if(product && product.images && product.images.length >0){ %>
+    <div class="product-gallery">
+      <div class="thumbnail-gallery">
+        <% product.images.forEach(function(image, index) { %>
+          <img src="<%= image %>" class="thumbnail <%= index === 0 ? 'active' : '' %>" alt="Product Thumbnail <%= index + 1 %>" onclick="changeImage('<%= image %>', <%= index %>)">
+        <% }) %>
+      </div>
+      <div class="zoom-container" id="zoom-container">
+        <img id="zoomed-image" src="<%= product.images[0] %>" alt="Zoomed Product Image">
+      </div>
+      
+    </div>
+
+    <div class="product-details">
+      <h1><%= product.name %></h1>
+      <p><strong>Category:</strong> <%= product.category.name %></p>
+
+
+      <p><strong>Color:</strong> <%= product.color || "N/A" %></p>
+
+
+      <label for="size"><strong>Select Size</strong></label>
+      <select name="size" id="size" required>
+        <option value="">Select Size</option>
+        <% if (product.size && product.size.length > 0) { %>
+          <% product.size.forEach(size => { %>
+            <option value="<%= size %>"><%= size %></option>
+          <% }); %>
+        <% } else { %>
+          <option value="">No sizes available</option>
+        <% } %>
+      </select>
+      
+      <p id="size-error" style="color: red; display: none;">Please select a size.</p> <!-- Error message -->
+      
+    
+
+      
+
+     
+
+      <% if (product.highlights) { %>
+        <p><strong>Highlights:</strong></p>
+        <ul>
+            <% if (Array.isArray(product.highlights)) { %>
+                <% product.highlights.forEach(function(highlight) { %>
+                    <li><%= highlight %></li>
+                <% }) %>
+            <% } else { %>
+                <li><%= product.highlights %></li> <!-- Handle as a single string -->
+            <% } %>
+        </ul>
+    <% } %>
+    
+   
+  
+    <p><strong>Price:</strong>
+      <% if (discountedPrice < product.price) { %>
+          <span class="original-price" style="text-decoration: line-through; color: red;">
+              ₹<%= product.price.toFixed(2) %>
+          </span>
+          <span class="discounted-price" style="font-weight: bold; color: green;">
+              ₹<%= discountedPrice.toFixed(2) %>
+          </span>
+  
+          <p><strong>Applied Offer:</strong> 
+              <% if (appliedOffer === 'Category Offer' && offer) { %>    
+                   
+                  <%= (offer.discountType === 'percentage') ? (offer.discountValue + '%') : ('₹' + offer.discountValue) %> off
+              <% } else if (appliedOffer === 'Product Discount') { %>  
+                   <%= product.discount %>% off
+              <% } %>
+          </p>
+      <% } else { %>
+          ₹<%= product.price.toFixed(2) %>
+      <% } %>
+  </p>
+  
+  
+  
+  <p><strong></strong> 
+        <% if (product.totalRatings && product.totalRatings > 0) { %>
+          <span class="rating-container">
+            <% for (let i = 0; i < product.totalRatings; i++) { %>
+              <i class="fa fa-star"></i> 
+            <% } %>
+          </span>
+          <span class="rating-text"><%= product.totalRatings %> </span>
+        <% } else { %>
+          No ratings yet.
+        <% } %>
+      </p>
+      
+      <div>
+      <% } %>
+      <% if(product.quantity>0) { %>
+        <button type="button" class="add-to-cart" data-product-id="<%= product._id %>">Add to Cart</button>
+      <% } else{ %>
+        <p class="out-of-stock-message" style="color: red; font-weight: bold;">Out of Stock</p>
+        <% } %>   
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const sizeSelect = document.getElementById('size');
+      const errorMessage = document.getElementById('size-error');
+      const addToCartButtons = document.querySelectorAll('.add-to-cart'); // Multiple buttons support
+  
+      // Handle image zoom
+      const zoomContainer = document.getElementById('zoom-container');
+      const zoomedImage = document.getElementById('zoomed-image');
+      zoomContainer.addEventListener('mousemove', (e) => {
+        const rect = zoomContainer.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        zoomedImage.style.transform = `scale(2) translate(-${x}%, -${y}%)`;
+      });
+  
+      zoomContainer.addEventListener('mouseleave', () => {
+        zoomedImage.style.transform = 'scale(1) translate(0, 0)';
+      });
+  
+      // Handle add to cart click event
+      addToCartButtons.forEach((button) => {
+        button.addEventListener('click', async (event) => {
+          const productId = button.getAttribute('data-product-id');
+          console.log('Product ID:', productId);
+  
+          // Check if size is selected
+          if (sizeSelect.value === "") {
+            errorMessage.style.display = 'block';  // Show error message
+            event.preventDefault();  // Prevent further action (button click submission)
+            return; // Stop execution if no size is selected
+          } else {
+            errorMessage.style.display = 'none';  // Hide error message if size is selected
+          }
+  
+          try {
+            console.log('Sending request to add item to cart...');
+            const response = await fetch('/add-to-cart', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ productId, quantity: 1 }),
+            });
+  
+            if (response.ok) {
+              const result = await response.json();
+              console.log('Product added to cart:', result);
+              window.location.href = "/cart"; // Navigate to cart page
+            } else {
+              const errorText = await response.text();
+              console.error('Server response:', errorText);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to add product to cart. Please try again.',
+              });
+            }
+          } catch (error) {
+            console.error('Error during fetch request:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to add product to cart. Please try again.',
+            });
+          }
+        });
+      });
+    });
+  </script>
+  
+</body>
+</html>

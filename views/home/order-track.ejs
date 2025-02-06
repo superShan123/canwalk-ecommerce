@@ -1,0 +1,501 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Order History</title>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+        <style>
+            body {
+                font-family: 'Roboto', sans-serif;
+                background-color: #F5F5F5;
+            }
+
+            .return-form {
+                background-color: #f9f9f9;
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+                padding: 20px;
+                margin-top: 10px;
+            }
+
+            .return-order-btn {
+                background-color: #4CAF50;
+                color: white;
+                padding: 8px 12px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .return-order-btn:hover {
+                background-color: #45a049;
+            }
+
+            .hidden {
+                display: none;
+            }
+
+            td, th {
+                padding-left: 10px;
+                padding-right: 10px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                text-align: left;
+            }
+
+            th {
+                border-bottom: 2px solid #ddd;
+            }
+
+            td {
+                border-bottom: 1px solid #ddd;
+            }
+
+            .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Pagination buttons */
+.pagination-btn {
+    margin: 0 5px;
+    padding: 8px 16px;
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+/* Pagination button on hover */
+.pagination-btn:hover {
+    background-color: #ddd;
+}
+
+/* Active page style */
+.pagination-btn.active {
+    background-color: #333;
+    color: #fff;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+/* Disabled button style (previous/next if at boundary) */
+.pagination-btn.disabled {
+    background-color: #f5f5f5;
+    color: #ccc;
+    pointer-events: none;
+}
+
+
+/* Ensure the radio buttons are hidden */
+input[type="radio"] {
+    display: none;
+}
+
+/* Reset the color of the label stars */
+.star-label {
+    color: #ccc; /* Grey color for unselected stars */
+}
+
+/* Hover effect for stars */
+.star-label:hover,
+.star-label:hover ~ .star-label {
+    color: #ffb400; /* Yellow color on hover */
+}
+
+/* Handle the active state of the labels when a radio button is selected */
+input[type="radio"]:checked ~ .star-label {
+    color: #ffb400; /* Yellow color for selected stars */
+}
+
+
+
+
+
+
+
+
+        </style>
+    </head>
+    <%- include('../../partials/header') %>
+    <body>
+        <div class="container mx-auto p-6">
+            <h1 class="text-2xl font-bold mb-4">Order History</h1>
+            <p class="mb-6">See your recent orders, download your invoices.</p>
+
+            <% if (orders && orders.length > 0) { %>
+                <% orders.forEach(function(order) { %>
+                    <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                        <div class="flex justify-between mb-4 border-b pb-2">
+                            <h2 class="text-lg font-semibold">Order ID: <%= order.orderId %></h2>
+                            <p class="text-sm text-gray-600">Placed On: <%= new Date(order.createdAt).toLocaleDateString() %></p>
+                        </div>
+            
+                        <div class="mb-4">
+                            <table class="w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="text-left border-b py-2">Products</th>
+                                        <th class="text-left border-b py-2">Amount</th>
+                                        <th class="text-left border-b py-2">Payment Info</th>
+                                        <th class="text-left border-b py-2">Status</th>
+                                       
+                                        <th class="text-left border-b py-2">Payment Method</th>
+                                        <th class="text-left border-b py-2">Date</th>
+                                        <th class="text-left border-b py-2">Invoice</th>
+                                        <th class="text-left border-b-py-2">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hover:bg-gray-100">
+                                        <td class="py-2">
+                                            <% order.items.forEach(function(item, index) { %>
+                                                <%= item.productId.name %>
+                                                <% if (index < order.items.length - 1) { %>
+                                                    <br>
+                                                <% } %>
+                                            <% }) %>
+                                        </td>
+                                        <td><%= order.orderSummary.total %></td>
+                                        <td><%= order.paymentInfo.status %></td>
+                                        <td class="py-2">
+                                            <span class="text-green-600 font-semibold">
+                                                <%= order.orderStatus === 'RETURN_REQUESTED' ? 'Return Requested' : order.orderStatus %>
+                                            </span>
+                                        </td>
+                                        <td class="py-2"><%= order.paymentInfo.method %></td>
+                                        <td class="py-2"><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                                        <td class="py-2">
+                                            <% if(order.paymentInfo.status !== 'FAILED'){ %>
+                                                <a href="<%= downloadInvoiceUrl %>/<%= order._id %>" class="text-blue-600">DOWNLOAD INVOICE</a>
+                                            <% } %>
+
+                                        </td>
+                                        <td class="py-2">
+                                            <% if(order.paymentInfo.status !== 'FAILED'){ %>
+                                                <a href="/order-details/<%= order._id %>" class="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600">View Details</a>
+                                            <% } %>
+
+                                        </td>  
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                       
+
+                        <% if (order.paymentInfo.status === 'FAILED') { %>
+                            <div class="order-actions mb-4">
+                                <button 
+                                    class="retry-payment-btn bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition-all"
+                                    data-order-id="<%= order._id %>"
+                                >
+                                    Retry Payment
+                                </button>
+                            </div>
+                        <% } %>
+
+                       
+                        
+                        
+                        
+                        
+                        
+
+                        <% if(order.paymentInfo.status !== 'FAILED' ){ %>
+                        <% if (order.orderStatus !== 'DELIVERED' && order.orderStatus !== 'RETURN') { %>
+                            <div class="order-actions mb-4">
+                            <% if (order.orderStatus == 'CANCELLED') { %>
+                                <h1 class="text-red-600 text-2xl text-center font-sans bg-red-100 p-4 rounded">
+                                    Order has been cancelled 
+                                </h1>
+                            <% } else { %>
+                                <button class="bg-red-600 text-white py-2 px-4 rounded cancel-order-btn" data-order-id="<%= order._id %>">Cancel Order</button>
+                            <% } %>
+                            <div class="cancel-form hidden" id="cancel-form-<%= order._id %>">
+                                <form method="POST" action="/cancel-order">
+                                    <input type="hidden" name="orderId" value="<%= order._id %>">
+                                    <label for="cancel-reason-<%= order._id %>">Reason for Cancellation:</label>
+                                    <select name="cancelReason" id="cancel-reason" class="w-full border p-2 mb-4" required>
+                                        <option value="">Select Reason</option>
+                                        <option value="Chnged my mind">Changed my Mind</option>
+                                        <option value="Found a better price">Found a better price</option>
+                                        <option value="Ordered by mistake">Ordered by Mistake</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded">Confirm Cancellation</button>
+                                </form>
+                            </div>
+                        </div>
+                        <% } %>  
+                        <% } %>    
+
+                        <% if (order.orderStatus === 'RETURN') { %>
+                            <h1 class="text-green-600 text-2xl text-center font-sans bg-green-100 p-4 rounded">Order has been Returned</h1>
+                        <% } else if (order.orderStatus === 'DELIVERED') { %>
+                            <div class="order-actions">
+                                <!-- Rating Section -->
+                                <div class="rating-section">
+                                    <h3 class="text-lg font-semibold mb-2">Rate Your Order</h3>
+                                    <form method="POST" action="/submit-rating" class="mb-4">
+                                        <input type="hidden" name="orderId" value="<%= order._id %>">
+                                
+                                        <div class="flex space-x-2 mb-4">
+                                            <% for (let i = 1; i <= 5; i++) { %>
+                                                <input type="radio" id="star-<%= i %>-<%= order._id %>" name="rating" value="<%= i %>" class="hidden star-input" required />
+                                                <label for="star-<%= i %>-<%= order._id %>" class="text-gray-400 text-2xl cursor-pointer star-label">&#9733;</label>
+                                            <% } %>
+                                        </div>
+                                
+                                        <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+                                            Submit Rating
+                                        </button>
+                                    </form>
+                                </div>
+                                
+
+                            <div class="order-actions">
+                                <button class="return-order-btn" data-order-id="<%= order._id %>">Return Order</button>
+                                <div class="return-form hidden" id="return-form-<%= order._id %>">
+                                    
+                                    <form method="POST" action="/submit-return">
+                                        <input type="hidden" name="orderId" value="<%= order._id %>">
+                                        
+                                        <label for="reason-<%= order._id %>">Reason for Return:</label>
+                                        <select name="reason" id="reason-<%= order._id %>" class="w-full border p-2 mb-4" required>
+                                            <option value="">-- Select --</option>
+                                            <option value="Damaged/Defective Item">Damaged/Defective Item</option>
+                                            <option value="Received the Wrong Item">Received the Wrong Item</option>
+                                            <option value="Did not Meet Expectation">Did not Meet Expectation</option>
+                                            <option value="Ordered by Mistake">Ordered by Mistake</option>
+                                        </select>
+
+                                        <label for="product-quality-<%= order._id %>">Was the product quality as per your expectation?</label>
+                                        <select name="productQuality" id="product-quality-<%= order._id %>" required class="w-full border p-2 mb-4">
+                                            <option value="">--Select Option--</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+
+                                        <label for="service-rating-<%= order._id %>">How would you rate your overall return experience?</label>
+                                        <select name="serviceRating" id="service-rating-<%= order._id %>" required class="w-full border p-2 mb-4">
+                                            <option value="">--Select Rating--</option>
+                                            <option value="1">1 Star</option>
+                                            <option value="2">2 Stars</option>
+                                            <option value="3">3 Stars</option>
+                                            <option value="4">4 Stars</option>
+                                            <option value="5">5 Stars</option>
+                                        </select>
+
+                                        <label for="additional-feedback-<%= order._id %>">Additional Feedback:</label>
+                                        <textarea name="additionalFeedback" id="additional-feedback-<%= order._id %>" rows="3" class="w-full border p-2 mb-4" placeholder="Provide any additional details..."></textarea>
+
+                                        <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded">Submit Return Request</button>
+                                    </form>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p>No orders found for this user.</p>
+            <% } %>
+
+            <div class="pagination">
+                <% if (currentPage > 1) { %>
+                    <a href="/order-tracking?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="pagination-btn">Previous</a>
+                <% } else { %>
+                    <a class="pagination-btn disabled" style="pointer-events: none;">Previous</a>
+                <% } %>
+            
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <a href="/order-tracking?page=<%= i %>&limit=<%= limit %>" 
+                       class="pagination-btn <%= currentPage === i ? 'active' : '' %>">
+                       <%= i %>
+                    </a>
+                <% } %>
+            
+                <% if (currentPage < totalPages) { %>
+                    <a href="/order-tracking?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="pagination-btn">Next</a>
+                <% } else { %>
+                    <a class="pagination-btn disabled" style="pointer-events: none;">Next</a>
+                <% } %>
+            </div>
+        </div>
+
+        <script>
+
+            // JavaScript to handle rating star selection
+document.querySelectorAll('.star-input').forEach(star => {
+    star.addEventListener('change', function() {
+        const selectedRating = this.value;
+        const labels = document.querySelectorAll('.star-label');
+        
+        labels.forEach((label, index) => {
+            if (index < selectedRating) {
+                label.style.color = '#ffb400'; // Yellow color for selected stars
+            } else {
+                label.style.color = '#ccc'; // Grey color for unselected stars
+            }
+        });
+    });
+});
+
+
+function disableRatingForm(event) {
+        // Prevent the form from submitting normally
+        event.preventDefault();
+        
+        // Disable all form inputs and button
+        const form = document.getElementById('rating-form');
+        const inputs = form.querySelectorAll('input, button');
+        
+        inputs.forEach(input => {
+            input.disabled = true;
+        });
+
+        // You can also add a confirmation message or show a loader
+        const message = document.createElement('p');
+        message.textContent = 'Thank you for your rating!';
+        message.style.color = 'green';
+        form.appendChild(message);
+
+        // If you need to submit the form data using AJAX (without refreshing the page), do so here
+        // For now, we'll just submit the form normally:
+        form.submit();
+    }
+            // JavaScript to toggle the return form
+            document.querySelectorAll('.return-order-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const orderId = this.getAttribute('data-order-id');
+                    const returnForm = document.getElementById(`return-form-${orderId}`);
+                    if (returnForm) {
+                        returnForm.classList.toggle('hidden');
+                    } else {
+                        console.error(`Return form for order ID ${orderId} not found.`);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.return-form form').forEach(form => {
+        form.addEventListener('submit', function (e) {
+            // Allow normal form submission by removing e.preventDefault()
+            const orderId = this.querySelector('input[name="orderId"]').value;
+
+            // Optionally, you can show the user that the form is being submitted
+            const returnButton = document.querySelector(`.return-order-btn[data-order-id="${orderId}"]`);
+            const returnForm = document.getElementById(`return-form-${orderId}`);
+
+            // Optionally, remove the button and form immediately after submitting the form
+            if (returnButton) returnButton.remove(); 
+           
+        });
+    });
+
+
+    document.querySelectorAll('.cancel-order-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const orderId = this.getAttribute('data-order-id');
+                    const cancelForm = document.getElementById(`cancel-form-${orderId}`);
+                    cancelForm.classList.toggle('hidden');
+                });
+            });
+
+
+    // Retry payment button logic
+document.querySelectorAll('.retry-payment-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        const orderId = this.getAttribute('data-order-id');  // Get the orderId from the button
+       
+        fetch('/checkout/retry', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                orderId: orderId,  // Send orderId to the backend
+                 
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Received data:', data); 
+            if (data.success) {
+                const options = {
+                    key: 'rzp_test_KDYrLJHnu3O9Ip', // Your Razorpay key
+                    amount: data.orderSummary.total * 100,  // Convert amount to paise (100 paise = 1 INR)
+                    currency: 'INR',  // Currency
+                    order_id: data.order.id,  // The order ID generated by Razorpay
+                    name: "Canwalk",
+                    description: 'Order payment', 
+                    handler: function (response) {
+                        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = response;
+                        
+                        fetch('/update-status',{
+                            method:'POST',
+                            headers:{
+                                'Content-Type': 'application/json'
+                            },
+                            body:JSON.stringify({
+                                orderId : orderId,
+                                paymentId : razorpay_payment_id,
+                            })
+                        }).then((updateResponse)=> updateResponse.json())
+                        .then((updateData)=>{
+                            if(updateData.success){
+                                console.log('Order status updated')
+                                window.location.href='/order-tracking'
+                            }else{
+                                console.error('Error to update status',updateData)
+                                alert("Payment successful, but failed to update order status.")
+                            }
+                        })
+                        .catch((err)=>{
+                            console.error('Error updating order status',err)
+                            alert(' Failed to updated status')
+
+                        })
+
+                    },
+                    prefill: {
+                        name: 'Customer Name',  // Replace with dynamic customer data if needed
+                        email: 'customer@example.com',
+                        contact: '8848475213',
+                    },
+                    theme: {
+                        color: "#F37254"
+                    }
+                };
+
+                // Open the Razorpay payment modal
+                console.log("Razorpay Options:", options);
+                const razorpay = new Razorpay(options);
+                razorpay.open();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+});
+
+
+
+
+
+
+
+
+
+
+        </script>
+    </body>
+    </html>

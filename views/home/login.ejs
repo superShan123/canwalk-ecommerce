@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="/css/login.css"> <!-- Link to the separate CSS file -->
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h2>Login Page</h2>
+
+            <!-- Display error message if any -->
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="error-message" style="color: red; margin-bottom: 15px;">
+                    <p><%= error %></p>
+                </div>
+            <% } %>
+
+            <form action="/login" method="POST">
+                <div class="input-group">
+                    <input type="text" name="username" required placeholder="Username">
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" required placeholder="Password">
+                </div>
+                <button type="submit" class="login-btn">Get Started</button>
+                <div class="extra-options">
+                    <a href="/forgot-password">Forgot Password?</a>
+                    <br>
+                    <a href="/signup">Don't have an account? Sign Up</a>
+                </div>
+            </form>
+            <div class="or-divider">OR</div>
+            
+            <!-- Google OAuth button -->
+            <a href="/auth/google" class="google-btn">
+                <button type="button">Login with Google</button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

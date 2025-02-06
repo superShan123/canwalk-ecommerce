@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Report</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f7fc;
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background-color: #2c3e50;
+      color: #ecf0f1;
+      padding: 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar h1 {
+      font-size: 1.8rem;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 20px;
+    }
+
+    .sidebar ul li a {
+      color: #ecf0f1;
+      text-decoration: none;
+      font-size: 1.1rem;
+      padding: 10px;
+      display: block;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    .sidebar ul li a.active,
+    .sidebar ul li a:hover {
+      background-color: #3498db;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 270px;
+      padding: 20px;
+      width: calc(100% - 270px);
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #ecf0f1;
+      position: relative;
+    }
+
+    /* Title for Sales Report */
+    header h2 {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    /* Admin Info Section */
+    header .admin-info {
+      display: flex;
+      align-items: center;
+      margin-left: 1100px;
+    }
+
+    header .admin-info span {
+      margin-right: 15px;
+      font-size: 1rem;
+      color: #3498db;
+    }
+
+    header .logout-btn {
+      font-size: 1rem;
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    header .logout-btn:hover {
+      text-decoration: underline;
+    }
+
+    /* Form Section */
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      max-width: 600px;
+      margin-top: 20px;
+    }
+
+    form label {
+      font-size: 1rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    form input,
+    form select {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 1rem;
+    }
+
+    form button {
+      background-color: #3498db;
+      color: #fff;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    form button:hover {
+      background-color: #2980b9;
+    }
+
+    /* Report Summary */
+    h2 {
+      margin-top: 30px;
+      font-size: 1.8rem;
+      color: #333;
+    }
+
+    .report-card {
+      background-color: #fff;
+      padding: 20px;
+      margin: 15px 0;
+      border-radius: 8px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .report-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .report-card p {
+      font-size: 1.2rem;
+      color: #333;
+    }
+
+    /* Coupon List */
+    .coupon-list p {
+      font-size: 1rem;
+      color: #333;
+      margin: 5px 0;
+    }
+
+    /* Download Button */
+    .download-btn {
+      display: inline-block;
+      background-color: #3498db;
+      color: white;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      margin-top: 20px;
+    }
+
+    .download-btn:hover {
+      background-color: #2980b9;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      header .admin-info {
+        margin-left: 0;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h1>Admin Categories</h1>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="/admin/customers">Customers</a></li>
+            <li><a href="/admin/product">Products</a></li>
+            <li><a href="/admin/categories">Categories</a></li>
+            <li><a href="/admin/order">Orders</a></li>
+            <li><a href="/admin/coupon">Coupons</a></li>
+            <li><a href="/admin/sales-report" class="active">Sales</a></li>
+            <li><a href="/admin/offer">Offers</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <div class="admin-info">
+                <span>Admin</span>
+                <a href="/admin/login" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <h1>Sales Report</h1>
+
+        <!-- Form Section for Filter -->
+        <form method="GET" action="/admin/sales-report">
+            <label for="filter">Select Filter:</label>
+            <select name="filter" id="filter" onchange="toggleCustomDateFields(this.value)">
+              <option value="daily" <% if(filter === 'daily') {%>selected<%} %>>Daily</option>
+              <option value="weekly" <% if (filter === 'weekly') { %>selected<% } %>>Weekly</option>
+              <option value="monthly" <% if (filter === 'monthly') { %>selected<% } %>>Monthly</option>
+              <option value="custom" <% if (filter === 'custom') { %>selected<% } %>>Custom Range</option>
+            </select>
+
+            <div id="custom-dates" style="display: none;" class="form-group">
+                <label for="startDate">Start Date:</label>
+                <input type="date" name="startDate" id="startDate">
+                <label for="endDate">End Date:</label>
+                <input type="date" name="endDate" id="endDate">
+            </div>
+
+            <button type="submit">Generate Report</button>
+        </form>
+
+        <% if (reportData) { %>
+            <h2>Report Summary</h2>
+
+            <!-- Report Metrics -->
+            <div class="report-card">
+                <h3>Total Orders</h3>
+                <p><%= reportData.totalOrders %></p>
+            </div>
+
+            <div class="report-card">
+                <h3>Total Sales</h3>
+                <p><%= reportData.totalSales %></p>
+            </div>
+            
+            <div class="report-card">
+                <h3>Total Tax Collected</h3>
+                <p><%= reportData.totalTax %></p>
+            </div>
+
+            <div class="report-card">
+                <h3>Total Revenue</h3>
+                <p><%= reportData.totalRevenue %></p>
+            </div>
+
+            <div class="report-card">
+              <h3>Total Discount</h3>
+              <p><%= reportData.totaldiscount %></p>
+          </div>
+
+            <div class="report-card">
+                <h3>Total Refunds</h3>
+                <p><%= reportData. refundCount%></p>  
+            </div>
+
+            <div class="report-card">
+                <h3>Coupons Used</h3>
+                <div class="coupon-list">
+                    <% reportData.couponData.forEach(function(coupon) { %>
+                        <p><%= coupon.code %></p>
+                    <% }) %>
+                </div>
+            </div>
+
+            <!-- Download PDF and Excel Links -->
+            <div class="download-links">
+              <button onclick="downloadReport('pdf')" class="download-btn">Download PDF Report</button>
+              <button onclick="downloadReport('excel')" class="download-btn">Download Excel Report</button>
+          </div>
+        <% } else { %>
+            <p>No report data available. Please select a filter and generate a report.</p>
+        <% } %>
+
+    </div>
+    <script>
+      function toggleCustomDateFields(value) {
+          const customDates = document.getElementById('custom-dates');
+          if (customDates) {
+              customDates.style.display = value === 'custom' ? 'block' : 'none';
+          }
+      }
+
+      function validateDates(startDate, endDate) {
+          if (!startDate || !endDate) {
+              alert('Please select both start and end dates');
+              return false;
+          }
+
+          const start = new Date(startDate);
+          const end = new Date(endDate);
+
+          if (end < start) {
+              alert('End date must be after start date');
+              return false;
+          }
+
+          return true;
+      }
+
+      function downloadReport(format) {
+          const filter = document.getElementById('filter').value;
+          let startDate = '';
+          let endDate = '';
+
+          if (filter === 'custom') {
+              const startDateInput = document.getElementById('startDate');
+              const endDateInput = document.getElementById('endDate');
+
+              if (!startDateInput || !endDateInput) {
+                  console.error('Date input fields not found');
+                  alert('Error: Could not find date input fields');
+                  return;
+              }
+
+              startDate = startDateInput.value;
+              endDate = endDateInput.value;
+
+              if (!validateDates(startDate, endDate)) {
+                  return;
+              }
+          }
+
+          try {
+              let downloadUrl = `/admin/download-report?filter=${filter}&format=${format}`;
+              
+              if (filter === 'custom') {
+                  downloadUrl += `&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;
+              }
+
+              window.location.href = downloadUrl;
+          } catch (error) {
+              console.error('Error generating download URL:', error);
+              alert('An error occurred while trying to download the report. Please try again.');
+          }
+      }
+
+      // Initialize the page
+      document.addEventListener('DOMContentLoaded', function() {
+          // Set initial state of custom date fields based on current filter value
+          const filterSelect = document.getElementById('filter');
+          if (filterSelect) {
+              toggleCustomDateFields(filterSelect.value);
+              
+              // Add change event listener
+              filterSelect.addEventListener('change', function(event) {
+                  toggleCustomDateFields(event.target.value);
+              });
+          }
+
+          // Pre-fill date inputs with current filter dates if they exist in URL
+          const urlParams = new URLSearchParams(window.location.search);
+          const startDate = urlParams.get('startDate');
+          const endDate = urlParams.get('endDate');
+
+          if (startDate && endDate) {
+              const startDateInput = document.getElementById('startDate');
+              const endDateInput = document.getElementById('endDate');
+              
+              if (startDateInput && endDateInput) {
+                  startDateInput.value = startDate;
+                  endDateInput.value = endDate;
+              }
+          }
+      });
+  </script>
+  
+  
+</body>
+</html>

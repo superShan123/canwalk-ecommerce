@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<%- include('../../partials/header') %>
+
+<body class="bg-gray-100">
+    
+
+    <!-- Profile Container -->
+    <div class="max-w-6xl mx-auto mt-6 flex flex-col md:flex-row bg-white rounded-lg shadow-lg overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="bg-gray-200 w-full md:w-1/4 p-6">
+            <h3 class="text-xl font-semibold mb-6 text-gray-700">Welcome, <%= username %>!</h3>
+            <nav class="space-y-4">
+                <a href="#" class="block px-4 py-2 text-gray-600 hover:text-white hover:bg-blue-500 rounded">
+                    My Profile
+                </a>
+                <a href="/order-tracking" class="block px-4 py-2 text-gray-600 hover:text-white hover:bg-blue-500 rounded">
+                    My Orders
+                </a>
+                <a href="/address" class="block px-4 py-2 text-gray-600 hover:text-white hover:bg-blue-500 rounded">
+                    Saved Addresses
+                </a>
+                <a href="/wallet" class="block px-4 py-2 text-gray-600 hover:text-white hover:bg-blue-500 rounded">
+                    Wallet
+                </a>
+                <a href="/wishlist" class="block px-4 py-2 text-gray-600 hover:text-white hover:bg-blue-500 rounded">
+                    Wishlist
+                </a>
+
+                <a href="/password" class="block px-4 py-2 text-gray-600 hover:text-white hover:bg-blue-500 rounded">
+                    Reset Password
+                </a>
+                
+
+               
+                <a href="/logout" class="block px-4 py-2 text-gray-600 hover:text-white hover:bg-blue-500 rounded">Logout</a>
+
+               
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="w-full md:w-3/4 p-6">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Edit Profile</h2>
+
+            <!-- Wallet Balance Section -->
+            <div class="mb-8 p-6 bg-blue-100 rounded-lg text-center shadow">
+                <h4 class="text-lg font-semibold text-gray-700 mb-2">Wallet Balance</h4>
+                <p class="text-3xl text-blue-600 font-bold">₹<%= walletBalance %></p>
+            </div>
+
+            <!-- Profile Form -->
+            <form action="/update-profile" method="POST" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-sm font-bold text-gray-700 mb-1">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter Username" value="<%= username %>" 
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-bold text-gray-700 mb-1">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter Email" value="<%= email %>" 
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+                <button type="submit" 
+                        class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700">
+                    Save Changes
+                </button>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

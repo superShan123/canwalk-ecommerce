@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Address</title>
+  <!-- SweetAlert CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f7fc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    .form-container {
+      width: 100%;
+      max-width: 500px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h1>Add New Address</h1>
+    <form id="addressForm" action="/add-address" method="POST">
+      <div class="form-group">
+        <label for="firstname">First Name</label>
+        <input type="text" id="firstname" name="firstname" required>
+      </div>
+      <div class="form-group">
+        <label for="lastname">Last Name</label>
+        <input type="text" id="lastname" name="lastname" required>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input type="text" id="phone" name="phone" required>
+      </div>
+      <div class="form-group">
+        <label for="pincode">Pincode</label>
+        <input type="text" id="pincode" name="pincode" required>
+      </div>
+      <div class="form-group">
+        <label for="state">State</label>
+        <input type="text" id="state" name="state" required>
+      </div>
+      <div class="form-group">
+        <label for="city">City</label>
+        <input type="text" id="city" name="city" required>
+      </div>
+      <button type="submit">Add Address</button>
+    </form>
+  </div>
+
+  <script>
+    // Add event listener to the form
+    document.getElementById('addressForm').addEventListener('submit', function(e) {
+      // Prevent default form submission
+      e.preventDefault();
+
+      // Fetch form field values
+      const firstname = document.getElementById('firstname').value.trim();
+      const lastname = document.getElementById('lastname').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const pincode = document.getElementById('pincode').value.trim();
+      const state = document.getElementById('state').value.trim();
+      const city = document.getElementById('city').value.trim();
+
+      // Validation patterns
+      const namePattern = /^[A-Z][a-zA-Z]*$/;
+      const phonePattern = /^\d{10}$/;
+      const pincodePattern = /^\d{6}$/;
+      const locationPattern = /^[A-Z][a-zA-Z ]*$/;
+
+      // Validate First Name
+      if (!namePattern.test(firstname)) {
+        Swal.fire('Error', 'First name must start with a capital letter and contain only alphabets.', 'error');
+        return;
+      }
+
+      // Validate Last Name
+      if (!namePattern.test(lastname)) {
+        Swal.fire('Error', 'Last name must start with a capital letter and contain only alphabets.', 'error');
+        return;
+      }
+
+      // Validate Phone Number
+      if (!phonePattern.test(phone)) {
+        Swal.fire('Error', 'Phone number must be exactly 10 digits.', 'error');
+        return;
+      }
+
+      // Validate Pincode
+      if (!pincodePattern.test(pincode)) {
+        Swal.fire('Error', 'Pincode must be exactly 6 digits.', 'error');
+        return;
+      }
+
+      // Validate State
+      if (!locationPattern.test(state)) {
+        Swal.fire('Error', 'State must start with a capital letter and contain only alphabets', 'error');
+        return;
+      }
+
+      // Validate City
+      if (!locationPattern.test(city)) {
+        Swal.fire('Error', 'City must start with a capital letter and contain only alphabets.', 'error');
+        return;
+      }
+
+      // If all validations pass, submit the form
+      Swal.fire('Success', 'Address added successfully!', 'success');
+      e.target.submit();
+    });
+  </script>
+</body>
+</html>

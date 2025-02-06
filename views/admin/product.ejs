@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management</title>
+    <link rel="stylesheet" href="/css/adminproducts.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h1>Product Management</h1>
+    <ul>
+        <li><a href="/admin/dashboard">Dashboard</a></li>
+        <li><a href="/admin/customers">Customers</a></li>
+        <li><a href="/admin/product" class="active">Products</a></li>
+        <li><a href="/admin/categories">Categories</a></li>
+        <li><a href="/admin/order">Orders</a></li>
+        <li><a href="/admin/coupon">Coupons</a></li>
+        <li><a href="/admin/sales-report">Sales</a></li>
+        <li><a href="/admin/offer">Offers</a></li>
+    </ul>
+</div>  
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Header -->
+    <header>
+        <h2>Products</h2>
+        <div class="admin-info">
+            <span>Admin</span>
+            <a href="/admin/login" class="logout-btn">Logout</a>
+        </div>
+    </header>
+
+  
+
+    <!-- Product Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Sl No</th>
+                <th>Product Name</th>
+                <th>Images</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% products.forEach((product, index) => { %>
+                <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= product.name %></td>
+                    <td><img src="<%= product.images[0] %>" alt="Product Image" width="50" height="50"></td>
+                    <td><%= product.status === 'active' ? 'Active' : 'Inactive' %></td>
+                    <td>
+                        <!-- Edit Button -->
+                        <a href="/admin/product/edit/<%= product._id %>" class="edit-btn">Edit</a>
+
+                        <!-- Block/Unblock Button with Form -->
+                        <form action="/admin/product/toggle-Status/<%= product._id %>" method="POST" style="display:inline;">
+                            <input type="hidden" name="status" value="<%= product.status === 'active' ? 'inactive' : 'active' %>">
+                            <button type="submit" class="block-btn">
+                                <%= product.status === 'active' ? 'Block' : 'Unblock' %>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <% if (currentPage > 1) { %>
+            <a href="/admin/product?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="pagination-btn">Previous</a>
+        <% } else { %>
+            <a class="pagination-btn disabled" style="pointer-events: none;">Previous</a>
+        <% } %>
+    
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <a href="/admin/product?page=<%= i %>&limit=<%= limit %>" 
+               class="pagination-btn <%= currentPage === i ? 'active' : '' %>">
+               <%= i %>
+            </a>
+        <% } %>
+    
+        <% if (currentPage < totalPages) { %>
+            <a href="/admin/product?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="pagination-btn">Next</a>
+        <% } else { %>
+            <a class="pagination-btn disabled" style="pointer-events: none;">Next</a>
+        <% } %>
+    </div>
+    
+    
+
+    <!-- Add Product Button -->
+    <div class="add-product-btn">
+        <form action="/admin/product/add" method="GET">
+            <button type="submit">Add Product</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

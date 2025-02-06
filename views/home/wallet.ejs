@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        thead tr {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        td, th {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        td {
+            color: #555;
+        }
+
+        th {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        table caption {
+            font-size: 1.2em;
+            margin: 10px;
+        }
+
+        /* Pagination buttons */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .pagination a {
+            text-decoration: none;
+            color: #007bff;
+            padding: 10px 15px;
+            margin: 0 5px;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .pagination a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .pagination span {
+            padding: 10px 15px;
+            margin: 0 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .pagination a.disabled {
+            pointer-events: none;
+            color: #ccc;
+            border-color: #ccc;
+            background-color: #f5f5f5;
+        }
+
+        /* Breadcrumbs styles */
+        .breadcrumbs {
+            background-color: #f1f1f1;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .breadcrumbs a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumbs span {
+            color: #777;
+        }
+
+        @media screen and (max-width: 768px) {
+            table {
+                width: 100%;
+            }
+
+            td, th {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Breadcrumbs Section -->
+    <div class="breadcrumbs">
+        <a href="/">Home</a> &gt;
+        <a href="/profile">Profile</a> &gt;
+        <a href="/wallet">Wallet</a> &gt; 
+        <span>Transactions</span>
+    </div>
+
+    <h1>Wallet Page</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Order Id</th>
+                <th>Transaction Type</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% newwallet.transactions.forEach(transaction => { %>
+                <tr>
+                    <td><%= transaction.orderId %></td>
+                    <td><%= transaction.type %></td>
+                    <td>₹<%= transaction.amount %></td>
+                    <td><%= new Date(transaction.createdAt).toLocaleDateString() %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <% if (pagination.hasPreviousPage) { %>
+            <a href="?page=<%= pagination.currentPage - 1 %>&limit=<%= pagination.limit %>">Previous</a>
+        <% } else { %>
+            <a class="disabled">Previous</a>
+        <% } %>
+    
+        <span>Page <%= pagination.currentPage %> of <%= pagination.totalPages %></span>
+    
+        <% if (pagination.hasNextPage) { %>
+            <a href="?page=<%= pagination.currentPage + 1 %>&limit=<%= pagination.limit %>">Next</a>
+        <% } else { %>
+            <a class="disabled">Next</a>
+        <% } %>
+    </div>
+
+</body>
+</html>

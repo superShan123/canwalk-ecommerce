@@ -1,0 +1,379 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap">
+    <style>
+        /* Reset and basic styling */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+        }
+        
+        .main-content {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        
+        h2 {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 500;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="number"], select, input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            background-color: #f9f9f9;
+        }
+
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+            border-color: #66afe9;
+            outline: none;
+            background-color: #fff;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error-message {
+            background-color: #ffcccb;
+            color: #d8000c;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .size-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .size-input input {
+            width: 70%;
+            margin-right: 10px;
+        }
+
+        .size-input button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .size-input button:hover {
+            background-color: #c82333;
+        }
+
+        #cropperContainer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        select {
+            font-size: 14px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        option {
+            padding: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="main-content">
+    <h2>Edit Product</h2>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="error-message">
+            <%= error %>
+        </div>
+    <% } %>
+
+    <form id="productForm" action="/admin/product/edit/<%= product._id %>" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="productName">Product Name:</label>
+            <input 
+                type="text" 
+                id="productName" 
+                name="name" 
+                value="<%= product.name %>" 
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="productQuantity">Product Quantity:</label>
+            <input
+                type="number"
+                id="productQuantity"
+                name="quantity"
+                value="<%= product.quantity %>"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="productPrice">Product Price:</label>
+            <input 
+                type="number" 
+                id="productPrice" 
+                name="price" 
+                value="<%= product.price %>" 
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="productColor">Product Color:</label>
+            <input 
+                type="text" 
+                id="productColor" 
+                name="color" 
+                value="<%= product.color %>" 
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="productSize">Product Sizes:</label>
+            <div id="productSizeContainer">
+                <% if (product.size && Array.isArray(product.size)) { %>
+                    <% product.size.forEach((size, index) => { %>
+                        <div class="size-input">
+                            <input type="number" name="size[]" value="<%= size %>" required>
+                            <button type="button" class="removeSizeButton">Remove</button>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="size-input">
+                        <input type="number" name="size[]" placeholder="Enter size (e.g., 8)" required>
+                        <button type="button" class="removeSizeButton">Remove</button>
+                    </div>
+                <% } %>
+            </div>
+            <button type="button" id="addSizeButton">Add Another Size</button>
+        </div>
+
+        <div class="form-group">
+            <label for="productDiscount">Product Discount:</label>
+            <input 
+                type="text" 
+                id="productDiscount" 
+                name="discount" 
+                value="<%= product.discount %>" 
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="productHighlights">Product Highlights:</label>
+            <input
+                type="text"
+                id="productHighlights"
+                name="highlights"
+                value="<%= product.highlights %>"
+                required
+            >
+        </div>
+
+        <select id="productCategory" name="category" required>
+            <label>Product Category:</label>
+            <% categories.forEach(category => { %>
+                <option value="<%= category._id %>" <%= product.category && product.category._id.toString() === category._id.toString() ? 'selected' : '' %>>
+                    <%= category.name %>
+                </option>
+            <% }) %>
+        </select>
+        
+
+        <div class="form-group">
+            <label>Current Product Images:</label>
+            <div id="currentImages">
+                <% product.images.forEach(function(image) { %>
+                    <img src="<%= image %>" height="100">
+                <% }); %>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="productImages">Upload New Product Images:</label>
+            <input type="file" id="productImages" name="images" multiple>
+        </div>
+
+        <div id="cropperContainer" style="display: none;">
+            <img id="imageToCrop" style="max-width: 100%; max-height: 400px;">
+            <button type="button" id="cropImageButton">Crop Image</button>
+        </div>
+
+        <input type="hidden" id="croppedImageData" name="croppedImageData">
+
+       
+
+        <button type="submit">Update Product</button>
+    </form>
+
+    <div id="preview"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+    <script>
+        function validateEditForm() {
+            const inputs = document.querySelectorAll(
+                "#productForm input[type='text'], #productForm input[type='number']"
+            );
+    
+            // Regular expression for capital letter validation
+            const startsWithCapital = /^[A-Z][a-zA-Z0-9\s]*$/;
+    
+            for (let input of inputs) {
+                // Validate text inputs for starting with a capital letter
+               
+                // Validate number inputs for non-negative values
+                if (input.type === "number" && input.value < 0) {
+                    alert(`Please ensure that the input "${input.name}" is not a negative number.`);
+                    input.focus();
+                    return false;
+                }
+            }
+    
+            // Check if new images are uploaded but not cropped
+            const newImages = document.getElementById('productImages').files;
+            if (newImages.length > 0 && !document.getElementById('croppedImageData').value) {
+                alert('Please crop and save the uploaded images before submitting.');
+                return false;
+            }
+    
+            return true; // All validations passed
+        }
+    
+        // Attach the validateEditForm function to form submission
+        document.getElementById("productForm").addEventListener("submit", function (e) {
+            if (!validateEditForm()) {
+                e.preventDefault(); // Prevent form submission if validation fails
+            }
+        });
+    
+        // Cropping logic (same as before but tweaked for this page)
+        let cropper;
+    
+        document.getElementById('productImages').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    // Display the image to be cropped
+                    document.getElementById('imageToCrop').src = e.target.result;
+                    document.getElementById('cropperContainer').style.display = 'block';
+    
+                    // Initialize or reset Cropper.js
+                    if (cropper) cropper.destroy();
+                    const image = document.getElementById('imageToCrop');
+                    cropper = new Cropper(image, {
+                        aspectRatio: 1, // Square aspect ratio
+                        viewMode: 2,
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    
+        document.getElementById('cropImageButton').addEventListener('click', function () {
+            const canvas = cropper.getCroppedCanvas();
+            const croppedImageData = canvas.toDataURL('image/jpeg');
+    
+            // Store cropped image data in hidden input
+            document.getElementById('croppedImageData').value = croppedImageData;
+    
+            // Display cropped image preview
+            const preview = document.getElementById('preview');
+            preview.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = croppedImageData;
+            img.height = 100;
+            preview.appendChild(img);
+    
+            // Hide cropper container
+            document.getElementById('cropperContainer').style.display = 'none';
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+    const sizeContainer = document.getElementById("productSizeContainer");
+    const addSizeButton = document.getElementById("addSizeButton");
+
+    // Add New Size
+    addSizeButton.addEventListener("click", function () {
+        const sizeDiv = document.createElement("div");
+        sizeDiv.classList.add("size-input");
+
+        sizeDiv.innerHTML = `
+            <input type="number" name="size[]" placeholder="Enter size (e.g., 8)" required>
+            <button type="button" class="removeSizeButton">Remove</button>
+        `;
+
+        sizeContainer.appendChild(sizeDiv);
+    });
+
+    // Remove Size
+    sizeContainer.addEventListener("click", function (event) {
+        if (event.target.classList.contains("removeSizeButton")) {
+            event.target.parentElement.remove();
+        }
+    });
+});
+
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canwalk</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+  <style>
+    .navbar-brand img {
+      height: 32px; /* Adjusted for medium size */
+      width: auto;
+    }
+
+    .navbar-brand .brand-text {
+      font-size: 1.25rem; /* Adjusted for medium size */
+      font-weight: 600;
+      color: #0f172a;
+      text-transform: uppercase;
+      background: linear-gradient(45deg, #0891b2, #0284c7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero {
+      background: linear-gradient(to right, #0891b2, #0284c7);
+      padding: 3rem 1.5rem; /* Slightly reduced padding */
+      color: white;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 2rem; /* Adjusted for medium size */
+      font-weight: bold;
+    }
+
+    .hero p {
+      font-size: 1rem; /* Adjusted for medium size */
+      opacity: 0.9;
+    }
+
+    .nav-link {
+      font-size: 0.95rem; /* Slightly smaller text for links */
+    }
+
+    .fas.fa-shopping-cart {
+      font-size: 1.2rem; /* Medium size for cart icon */
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="/img/canwalk..png" alt="Canwalk Logo">
+        <span class="brand-text ms-2">Canwalk</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link text-secondary" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-secondary" href="/product">Shop</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-secondary" href="/order-tracking">Order</a>
+          </li>
+         
+          <li class="nav-item">
+            <a class="nav-link text-secondary" href="/profile">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-secondary" href="/cart">
+              <i class="fas fa-shopping-cart"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>Discover Your Perfect Style</h1>
+      <p>Explore our collection of premium footwear</p>
+    </div>
+  </section>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

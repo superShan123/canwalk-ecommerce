@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Addresses</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .addresses-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .address-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .address-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .address-card h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .address-card p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .add-address-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .action-buttons a {
+            margin-right: 10px;
+        }
+
+        .address-form input {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .edit-form {
+            display: none;
+        }
+
+        .add-address-btn {
+            display: inline-block;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .add-address-btn button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-address-btn button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Your Addresses</h1>
+        <% if (addresses && addresses.length > 0) { %>
+            <div class="addresses-container">
+                <% addresses.forEach(address => { %>
+                    <div class="address-card">
+                        <h3><strong>First Name:</strong> <%= address.firstname %></h3>
+                        <h3><strong>Last Name:</strong> <%= address.lastname %></h3>
+                        <h3><strong>Pincode:</strong> <%= address.pincode %></h3>
+                        <h3><strong>Phone:</strong> <%= address.phone %></h3>
+                        <h3><strong>City:</strong> <%= address.city %></h3>
+                        <h3><strong>State:</strong> <%= address.state %></h3>
+
+                        <!-- Display Edit and Delete Buttons -->
+                        <div class="action-buttons">
+                            <button class="btn btn-primary btn-sm" onclick="toggleEditForm('<%= address._id %>')">Edit</button>
+                            <form action="/delete-address/<%= address._id %>" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </div>
+
+                        <!-- Edit Form (Initially Hidden) -->
+                        <form action="/edit-address/<%= address._id %>" method="POST" class="edit-form" id="edit-form-<%= address._id %>">
+                            <div class="address-form">
+                                <label for="firstname">First Name</label>
+                                <input type="text" name="firstname" value="<%= address.firstname %>" required>
+
+                                <label for="lastname">Last Name</label>
+                                <input type="text" name="lastname" value="<%= address.lastname %>" required>
+
+                                <label for="phone">Phone</label>
+                                <input type="text" name="phone" value="<%= address.phone %>" required>
+
+                                <label for="city">City</label>
+                                <input type="text" name="city" value="<%= address.city %>" required>
+
+                                <label for="state">State</label>
+                                <input type="text" name="state" value="<%= address.state %>" required>
+
+                                <label for="pincode">Pincode</label>
+                                <input type="text" name="pincode" value="<%= address.pincode %>" required>
+
+                                <button type="submit" class="btn btn-success btn-sm">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <p class="text-center text-muted">No addresses found.</p>
+        <% } %>
+    </div>
+   
+     <!-- Add Another Address Button -->
+     <div class="add-address-btn">
+        <button onclick="window.location.href='/add-address'">Add Another Address</button>
+    </div>
+
+    <script>
+        // Function to toggle the edit form visibility
+        function toggleEditForm(addressId) {
+            const form = document.getElementById('edit-form-' + addressId);
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+        }
+
+        // Add validation to all edit forms
+        document.querySelectorAll('.edit-form').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // Prevent default submission
+
+                const firstname = form.querySelector('input[name="firstname"]').value.trim();
+                const lastname = form.querySelector('input[name="lastname"]').value.trim();
+                const city = form.querySelector('input[name="city"]').value.trim();
+                const state = form.querySelector('input[name="state"]').value.trim();
+                const pincode = form.querySelector('input[name="pincode"]').value.trim();
+                const phone = form.querySelector('input[name="phone"]').value.trim();
+
+                // Validation logic
+                if (!/^[A-Z][a-zA-Z]*$/.test(firstname)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid First Name',
+                        text: 'First Name must start with a capital letter and contain only alphabets.'
+                    });
+                    return;
+                }
+                if (!/^[A-Z][a-zA-Z]*$/.test(lastname)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Last Name',
+                        text: 'Last Name must start with a capital letter and contain only alphabets.'
+                    });
+                    return;
+                }
+                if (!/^[A-Z][a-zA-Z ]*$/.test(city)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid City',
+                        text: 'City must start with a capital letter and contain only alphabets.'
+                    });
+                    return;
+                }
+                if (!/^[A-Z][a-zA-Z ]*$/.test(state)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid State',
+                        text: 'State must start with a capital letter and contain only alphabets.'
+                    });
+                    return;
+                }
+                if (!/^\d{6}$/.test(pincode)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Pin Code',
+                        text: 'Pin Code must be exactly 6 digits.'
+                    });
+                    return;
+                }
+                if (!/^\d{10}$/.test(phone)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Phone Number',
+                        text: 'Phone Number must be exactly 10 digits.'
+                    });
+                    return;
+                }
+
+                // Submit the form if validation passes
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Changes Saved!',
+                    text: 'Address details updated successfully.'
+                }).then(() => {
+                    form.submit();
+                });
+            });
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

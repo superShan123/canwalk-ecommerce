@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Offer</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f9fa;
+    }
+
+    h1 {
+        text-align: center;
+        margin: 20px 0;
+        color: #333;
+    }
+
+    form {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    select[multiple] {
+        height: 120px;
+    }
+
+    button[type="submit"] {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: #28a745;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #218838;
+    }
+
+    div[id$="Error"] {
+        color: red;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    /* Additional Styling for Better Responsiveness */
+    @media (max-width: 768px) {
+        form {
+            padding: 15px;
+        }
+
+        button[type="submit"] {
+            font-size: 14px;
+        }
+    }
+</style>
+
+<body>
+    <h1>Update Offer</h1>
+    <form id="offerForm" action="/admin/update-offer/<%= offer._id %>" method="POST">
+        <div class="form-group">
+            <label>Category</label>
+            <select id="category" name="category" required>
+                <option value="" disabled>Select a Category</option>
+                <% categories.forEach(category => { %>
+                    <option value="<%= category._id %>"
+                        <%= category._id.toString() === offer.category._id.toString() ? 'selected' : '' %>>
+                        <%= category.name %>
+                    </option>
+                <% }) %>
+            </select>
+            <div id="categoryError" style="color: red;"></div>
+        </div>
+        
+
+        <div>
+            <label>Discount Type</label>
+            <select id="discountType" name="discountType" required>
+                <option value="percentage" <%= offer.discountType === 'percentage' ? 'selected' : '' %>>Percentage</option>
+                <option value="fixed" <%= offer.discountType === 'fixed' ? 'selected' : '' %>>Fixed Amount</option>
+            </select>
+        </div>
+        
+        <div>
+            <label>Discount Value:</label>
+            <input type="number" id="discountValue" name="discountValue" value="<%= offer.discountValue %>" required>
+            <div id="discountValueError" style="color: red;"></div>
+        </div>
+        
+        <div class="form-group">
+            <label>Expiry Date:</label>
+            <input type="date" id="expiryDate" name="expiryDate" value="<%= offer.expiryDate.toISOString().split('T')[0] %>" required>
+            <div id="expiryDateError" style="color: red;"></div>
+        </div>
+        
+        
+        
+        <button type="submit">Update Offer</button>
+    </form>
+
+    <script>
+        document.getElementById("offerForm").addEventListener("submit", function (event) {
+            let valid = true;
+
+            // Validate Discount Type and Value
+            const discountType = document.getElementById("discountType").value;
+            const discountValue = parseFloat(document.getElementById("discountValue").value);
+            const maxPercentage = 100;
+            const maxFixedAmount = 10000; // Example max fixed discount
+
+            // Prevent Negative Discount Value
+            if (discountValue < 0) {
+                valid = false;
+                document.getElementById("discountValueError").textContent = "Discount value cannot be negative.";
+            }
+            else if (isNaN(discountValue) || discountValue <= 0) {
+                valid = false;
+                document.getElementById("discountValueError").textContent =
+                    "Discount value must be a positive number.";
+            } else if (
+                (discountType === "percentage" && discountValue > maxPercentage) ||
+                (discountType === "fixed" && discountValue > maxFixedAmount)
+            ) {
+                valid = false;
+                document.getElementById("discountValueError").textContent =
+                    `Discount value exceeds maximum allowed. For percentages, max is ${maxPercentage}%. For fixed discounts, max is ₹${maxFixedAmount}.`;
+            } else {
+                document.getElementById("discountValueError").textContent = "";
+            }
+
+            // Validate Expiry Date
+            const expiryDate = document.getElementById("expiryDate").value;
+            const currentDate = new Date().toISOString().split("T")[0];
+            if (!expiryDate || expiryDate < currentDate) {
+                valid = false;
+                document.getElementById("expiryDateError").textContent =
+                    "Expiry date must be in the future.";
+            } else {
+                document.getElementById("expiryDateError").textContent = "";
+            }
+
+            // Prevent form submission if validation fails
+            if (!valid) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

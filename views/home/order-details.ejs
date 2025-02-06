@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9fafb;
+            color: #333;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .card-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .section-title {
+            background-color: #f5f5f5;
+            border-left: 4px solid #4CAF50;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .list-item {
+            background-color: #f9fafb;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        .list-item:nth-child(even) {
+            background-color: #e9ecef;
+        }
+
+        .btn-view-product {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-view-product:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-6">
+        <div class="card">
+            <div class="card-header">
+                <h1 class="text-2xl font-bold">Order Details</h1>
+            </div>
+            <div class="p-4">
+                <h2 class="text-xl font-semibold mb-4">Order ID: <%= order._id %></h2>
+                <p class="mb-2"><strong>Status:</strong> <span class="text-green-600 font-semibold"><%= order.orderStatus %></span></p>
+                <p class="mb-4"><strong>Placed On:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
+
+                <div class="mb-6">
+                    <h3 class="section-title text-lg font-semibold">Items</h3>
+                    <ul class="list-disc pl-6">
+                        <% order.items.forEach(item => { %>
+                            <li class="list-item">
+                                <span class="font-medium"><%= item.productId.name %></span> 
+                                - Quantity: <%= item.quantity %>
+
+                                <!-- View Product link inside the loop -->
+                                <div class="mt-4 text-center">
+                                    <a href="/product/details/<%= item.productId._id %>" class="btn-view-product">View Product</a>
+                                </div>
+                            </li>
+                        <% }) %>
+                    </ul>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="section-title text-lg font-semibold">Shipping Address</h3>
+                    <p><strong>Name:</strong> <%= order.shippingAddress.FirstName %> <%= order.shippingAddress.LastName %></p>
+                    <p><strong>Address:</strong> <%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> - <%= order.shippingAddress.pincode %></p>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="section-title text-lg font-semibold">Payment Information</h3>
+                    <p><strong>Method:</strong> <span class="text-blue-600 font-medium"><%= order.paymentInfo.method %></span></p>
+                    <p><strong>Total:</strong> ₹<span class="text-green-600 font-semibold"><%= order.orderSummary.total %></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

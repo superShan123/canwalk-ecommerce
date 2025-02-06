@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Management</title>
+    <link rel="stylesheet" href="/css/admincategories.css"> <!-- Link to the external CSS file -->
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h1>Admin Categories</h1>
+    <ul>
+        <li><a href="/admin/dashboard">Dashboard</a></li>
+        <li><a href="/admin/customers">Customers</a></li>
+        <li><a href="/admin/product">Products</a></li>
+        <li><a href="/admin/categories" class="active">Categories</a></li>
+        <li><a href="/admin/order">Orders</a></li>
+        <li><a href="/admin/coupon">Coupons</a></li>
+        <li><a href="/admin/sales-report">Sales</a></li>
+        <li><a href="/admin/offer">Offers</a></li>
+    </ul>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Header -->
+    <header>
+        <div class="admin-info">
+            <span>Admin</span>
+            <a href="/admin/login" class="logout-btn">Logout</a>
+        </div>
+    </header>
+
+    <% if (message) { %>
+        <div id="message" class="alert <%= messageType === 'success' ? 'alert-success alert-success-custom' : 'alert-danger' %>">
+            <%= message %>
+        </div>
+    <% } %>
+
+    
+
+    <!-- Categories Table and Pagination Container -->
+    <div class="categories-container">
+        <!-- Categories Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Sl No</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% categories.forEach((category, index) => { %>
+                    <tr>
+                        <td><%= index + 1 %></td>
+                        <td><%= category.name %></td>
+                        <td><%= category.status %></td>
+                        <td>
+                            <form action="/admin/toggle-status-category/<%= category._id %>" method="POST">
+                                <input type="hidden" name="status" value="<%= category.status === 'active' ? 'inactive' : 'active' %>">
+                                <button type="submit">
+                                    <%= category.status === 'active' ? 'Block' : 'Unblock' %>
+                                </button>
+                            </form>
+                            <form action="/admin/categories/edit/<%= category._id %>" method="GET">
+                                <button type="submit">Edit</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+
+        <!-- Add Category Form -->
+    <div class="form-container">
+        <form id="addCategoryForm" action="/admin/categories/add" method="POST">
+            <div class="form-group">
+                <label for="categoryName"></label>
+                <input type="text" id="categoryName" name="categoryName" placeholder="Enter category name" required>
+            </div>
+            <button type="submit" class="submit-btn">Add Category</button>
+        </form>
+    </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <% if (currentPage > 1) { %>
+                <a href="/admin/categories=<%= currentPage - 1 %>&limit=<%= limit %>" class="pagination-btn">Previous</a>
+            <% } else { %>
+                <a class="pagination-btn disabled" style="pointer-events: none;">Previous</a>
+            <% } %>
+        
+            <% for (let i = 1; i <= totalPages; i++) { %>
+                <a href="/admin/categories?page=<%= i %>&limit=<%= limit %>" 
+                   class="pagination-btn <%= currentPage === i ? 'active' : '' %>">
+                   <%= i %>
+                </a>
+            <% } %>
+        
+            <% if (currentPage < totalPages) { %>
+                <a href="/admin/order?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="pagination-btn">Next</a>
+            <% } else { %>
+                <a class="pagination-btn disabled" style="pointer-events: none;">Next</a>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Validate Add Category Form before form submission
+    document.getElementById("addCategoryForm").addEventListener("submit", function(event) {
+        const categoryName = document.getElementById("categoryName").value;
+
+        // Check if the category name starts with a number
+        if (/^[0-9]/.test(categoryName)) {
+            alert("Category name cannot start with a number.");
+            event.preventDefault();  // Prevent form submission
+            return false;
+        }
+
+        // Check if the first letter is capitalized
+        if (categoryName.charAt(0) !== categoryName.charAt(0).toUpperCase()) {
+            alert("Category name must start with a capital letter.");
+            event.preventDefault();  // Prevent form submission
+            return false;
+        }
+
+        return true;  // Allow form submission if validation passes
+    });
+
+    // Wait for the DOM to fully load before hiding the message
+    window.addEventListener('DOMContentLoaded', (event) => {
+        // Make the message disappear after 500 milliseconds (half a second)
+        if (document.getElementById("message")) {
+            setTimeout(function () {
+                document.getElementById("message").style.display = 'none';
+            }, 500); // Hide after 500 milliseconds
+        }
+    });
+</script>
+
+</body>
+</html>

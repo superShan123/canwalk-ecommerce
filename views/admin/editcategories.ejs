@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Category</title>
+    <link rel="stylesheet" href="/css/admineditcategories.css"> <!-- Link to your stylesheet -->
+</head>
+<body>
+
+<div class="main-content">
+    <!-- Header -->
+    
+
+    <!-- Edit Category Form -->
+    <div class="form-container">
+        <h2>Edit Category</h2>
+        <form id="editCategoryForm" action="/admin/categories/edit/<%= category._id %>" method="POST">
+            <div class="form-group">
+                <label for="categoryName">Category Name</label>
+                <input type="text" id="categoryName" name="categoryName" value="<%= category.name %>" required>
+            </div>
+            <button type="submit" class="submit-btn">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Validate Category Name before form submission
+    document.getElementById("editCategoryForm").addEventListener("submit", function(event) {
+        const categoryName = document.getElementById("categoryName").value;
+
+        // Check if the category name starts with a number
+        if (/^[0-9]/.test(categoryName)) {
+            alert("Category name cannot start with a number.");
+            event.preventDefault();  // Prevent form submission
+            return false;
+        }
+
+        // Check if the first letter is capitalized
+        if (categoryName.charAt(0) !== categoryName.charAt(0).toUpperCase()) {
+            alert("Category name must start with a capital letter.");
+            event.preventDefault();  // Prevent form submission
+            return false;
+        }
+
+        return true;  // Allow form submission if validation passes
+    });
+</script>
+
+</body>
+</html>

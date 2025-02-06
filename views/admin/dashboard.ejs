@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/admindashboard.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <nav class="sidebar">
+        <h1>Admin Dashboard</h1>
+        <ul>
+            <li><a href="/admin/dashboard" class="active">Dashboard</a></li>
+            <li><a href="/admin/customers">Customers</a></li>
+            <li><a href="/admin/product">Products</a></li>
+            <li><a href="/admin/categories">Categories</a></li>
+            <li><a href="/admin/order">Orders</a></li>
+            <li><a href="/admin/coupon">Coupons</a></li>
+            <li><a href="/admin/sales-report">Sales</a></li>
+            <li><a href="/admin/offer">Offers</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <header>
+            <h2>Dashboard</h2>
+            <div class="admin-info">
+                <span>Admin</span>
+                <a href="/admin/login" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <div class="stats-cards">
+            <div class="card">
+                <h3>Total Customers</h3>
+                <p><%= stats.totalCustomers || 0 %></p>
+            </div>
+            <div class="card">
+                <h3>Total Orders</h3>
+                <p><%= stats.totalOrders || 0 %></p>
+            </div>
+            <div class="card">
+                <h3>Revenue</h3>
+                <p><%= stats.totalRevenue || 0 %></p>
+            </div>
+            <div class="card">
+                <h3>Total Orders Today</h3>
+                <p><%= stats.ordersToday || 0 %></p>
+            </div>
+            <div class="card">
+                <h3>Total Orders of this Month</h3>
+                <p><%= stats.ordersThisMonth || 0 %></p>
+            </div>
+            <div class="card">
+                <h3>Total Orders of this Week</h3>
+                <p><%= stats.ordersThisWeek || 0 %></p>
+            </div>
+        </div>
+
+        <div class="filters">
+            <label for="year">Year</label>
+            <select id="year">
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+            </select>
+            
+            <label for="week">Week</label>
+            <select id="week">
+                <option value="1">Week 1</option>
+                <option value="2">Week 2</option>
+                <option value="3">Week 3</option>
+                <option value="4">Week 4</option>
+                <option value="5">Week 5</option>
+                <option value="6">Week 6</option>
+                <option value="7">Week7</option>
+            </select>
+            
+            <button id="filterButton">Filter</button>
+        </div>
+
+        <canvas id="yearlySalesChart"></canvas>
+
+        <h2>Best Selling Products</h2>
+        <table class="best-selling-table">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity Sold</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (Array.isArray(stats.bestSellingProducts) && stats.bestSellingProducts.length > 0) { %>
+                    <% stats.bestSellingProducts.forEach(product => { %>
+                    <tr>
+                        <td><%= product.productDetails.name %></td>
+                        <td><%= product.totalQuantity %></td>
+                    </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="2">No data available.</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+
+        <h2>Best Selling Categories</h2>
+        <table class="best-selling-table">
+            <thead>
+                <tr>
+                    <th>Category Name</th>
+                    <th>Total Sales</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (stats.bestSellingCategories && stats.bestSellingCategories.length > 0) { %>
+                    <% stats.bestSellingCategories.forEach(category => { %>
+                    <tr>
+                        <td><%= category.categoryData.name %></td>
+                        <td><%= category.totalSales %></td>
+                    </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="2">No data available.</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        window.onload = function () {
+            const yearlySales = <%- JSON.stringify(yearlySales) %>;
+
+            const yearDropdown = document.getElementById("year");
+            const weekDropdown = document.getElementById("week");
+
+            let chart;
+            function createChart(data) {
+                const months = [
+                    "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+                ];
+
+                const labels = months;
+                const datasets = {};
+
+                data.forEach((d) => {
+                    const category = d._id.category || "Uncategorized";
+                    if (!datasets[category]) {
+                        datasets[category] = {
+                            label: category,
+                            data: new Array(12).fill(0),
+                            backgroundColor: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`,
+                            borderColor: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`,
+                            borderWidth: 1,
+                        };
+                    }
+                    datasets[category].data[d._id.month - 1] = d.totalSales;
+                });
+
+                const ctx = document.getElementById("yearlySalesChart").getContext("2d");
+                if (chart) chart.destroy();
+                chart = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: Object.values(datasets),
+                    },
+                    options: {
+                        responsive: true,
+                        scales: { y: { beginAtZero: true } },
+                    },
+                });
+            }
+
+            createChart(yearlySales);
+
+            document.getElementById("filterButton").addEventListener("click", async () => {
+                const year = yearDropdown.value;
+                const week = weekDropdown.value;
+                const url = `/admin/dashboard?year=${year}&week=${week}`;
+
+                try {
+                    const response = await fetch(url, {
+                        headers: { 'Accept': 'application/json' },
+                    });
+                    const data = await response.json();
+                    createChart(data.yearlySales);
+                } catch (err) {
+                    console.error("Error during fetch", err);
+                }
+            });
+        };
+    </script>
+</body>
+
+</html>

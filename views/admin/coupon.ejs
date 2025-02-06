@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            display: flex;
+            min-height: 100vh;
+            flex-direction: row;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h1 {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 20px;
+        }
+
+        .sidebar ul li a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 10px;
+            display: block;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar ul li a.active,
+        .sidebar ul li a:hover {
+            background-color: #3498db;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+            width: calc(100% - 270px);
+            height: 100vh;
+            overflow-y: auto;
+        }
+    
+table {
+    width: 90%; 
+    min-width: 1200px; 
+    max-width: 1600px; /* Increased maximum width */
+    margin: 20px auto; /* Centers the table with some vertical spacing */
+    border-collapse: collapse;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}             
+
+/* Table headers and cells */
+table th, table td {
+    padding: 10px 5px; /* Increased horizontal padding */
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.95rem;
+    white-space: nowrap; /* Prevents text wrapping */
+}
+
+/* Column widths */
+table th:nth-child(1), table td:nth-child(1) {
+    width: 15%; /* Code column */
+    min-width: 150px;
+}
+
+table th:nth-child(2), table td:nth-child(2) {
+    width: 15%; /* Discount column */
+    min-width: 120px;
+}
+
+table th:nth-child(3), table td:nth-child(3) {
+    width: 15%; /* Min Amount column */
+    min-width: 130px;
+}
+
+table th:nth-child(4), table td:nth-child(4) {
+    width: 15%; /* Max Amount column */
+    min-width: 130px;
+}
+
+table th:nth-child(5), table td:nth-child(5) {
+    width: 15%; /* User Limit column */
+    min-width: 120px;
+}
+
+table th:nth-child(6), table td:nth-child(6) {
+    width: 15%; /* Expiry Date column */
+    min-width: 130px;
+}
+
+table th:nth-child(7), table td:nth-child(7) {
+    width: 10%; /* Actions column */
+    min-width: 100px;
+}
+
+
+        select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        } */
+
+         button {
+            padding: 5px 10px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Flexbox for Layout */
+        .main-container {
+            display: flex;
+            width: 100%;
+        }
+
+        .return-form {
+            margin-top: 10px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .return-form label,
+        .return-form select,
+        .return-form textarea {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .return-form textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        .hidden {
+    display: none;
+}
+
+
+.add-coupon-btn {
+    display: block;
+    margin-top: 450px;
+    position: relative;
+    left: -700px; /* Moves the button further left */
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: #fff;
+    font-size: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+
+
+.add-coupon-btn:hover {
+    background-color: #2980b9; /* Darker blue on hover */
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Pagination buttons */
+.pagination-btn {
+    margin: 0 5px;
+    padding: 8px 16px;
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+/* Pagination button on hover */
+.pagination-btn:hover {
+    background-color: #ddd;
+}
+
+/* Active page style */
+.pagination-btn.active {
+    background-color: #333;
+    color: #fff;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+/* Disabled button style (previous/next if at boundary) */
+.pagination-btn.disabled {
+    background-color: #f5f5f5;
+    color: #ccc;
+    pointer-events: none;
+}
+
+
+</style>
+<body>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <h1>Admin Panel</h1>
+            <ul>
+                <li><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/customers">Customers</a></li>
+                <li><a href="/admin/product">Products</a></li>
+                <li><a href="/admin/categories">Categories</a></li>
+                <li><a href="/admin/order">Orders</a></li>
+                <li><a href="/admin/coupon" class="active">Coupons</a></li>
+                <li><a href="/admin/sales-report">Sales</a></li>
+                <li><a href="/admin/offer">Offers</a></li>
+            </ul>
+        </div>
+    
+        <div class="main-content">
+            <h2>Coupon List</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Discount</th>
+                        <th>Min Amount</th>
+                        <th>Max Amount</th>
+                        <th>User Limit</th>
+                        <th>Expiry Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (coupons.length > 0) { %>
+                        <% coupons.forEach((coupon) => { %>
+                        <tr>
+                            <td><%= coupon.code %></td>
+                            <td><%= coupon.discount %></td>
+                            <td><%= coupon.minAmount %></td>
+                            <td><%= coupon.maxAmount %></td>
+                            <td><%= coupon.userLimit %></td>
+                            <td><%= coupon.expiryDate.toISOString().split('T')[0] %></td>
+                            <td>
+                                <form action="/admin/coupon-delete" method="POST" style="display:inline;">
+                                    <input type="hidden" name="couponId" value="<%= coupon._id %>">
+                                    <button type="submit" class="btn-delete">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    <% } %>
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <% if (currentPage > 1) { %>
+                    <a href="/admin/coupon?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="pagination-btn">Previous</a>
+                <% } else { %>
+                    <a class="pagination-btn disabled" style="pointer-events: none;">Previous</a>
+                <% } %>
+            
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <a href="/admin/coupon?page=<%= i %>&limit=<%= limit %>" 
+                       class="pagination-btn <%= currentPage === i ? 'active' : '' %>">
+                       <%= i %>
+                    </a>
+                <% } %>
+            
+                <% if (currentPage < totalPages) { %>
+                    <a href="/admin/coupon?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="pagination-btn">Next</a>
+                <% } else { %>
+                    <a class="pagination-btn disabled" style="pointer-events: none;">Next</a>
+                <% } %>
+            </div>
+
+        </div>
+    </div>
+    
+    <a href='/admin/coupon-add'>
+        <button class="add-coupon-btn">Add Coupon</button>
+    </a>
+
+    
+   
+</html>

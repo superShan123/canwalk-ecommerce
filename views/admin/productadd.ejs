@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <!-- Include Cropper.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <link rel="stylesheet" href="/css/adminaddproducts.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h1>Product Management</h1>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="/admin/customers">Customers</a></li>
+            <li><a href="/admin/products" class="active">Products</a></li>
+            <li><a href="/admin/categories">Categories</a></li>
+            <li><a href="/admin/orders">Orders</a></li>
+            <li><a href="/admin/banner">Banner</a></li>
+            <li><a href="/admin/discounts">Discounts</a></li>
+            <li><a href="/admin/settings">Settings</a></li>
+        </ul>
+    </div>  
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header>
+            <div class="admin-info">
+                <span>Admin</span>
+                <a href="/admin/logout" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <h2>Add Product</h2>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <!-- Standard form submission to the server -->
+        <form id="productForm" action="/admin/product/add" method="POST" enctype="multipart/form-data">
+            
+            <!-- Product Name -->
+            <div class="form-group">
+                <label for="productName">Product Name:</label>
+                <input 
+                    type="text" 
+                    id="productName" 
+                    name="name" 
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="productQuantity">Product Quantity:</label>
+                <input 
+                    type="number" 
+                    id="productQuantity" 
+                    name="quantity" 
+                    required
+                >
+            </div>
+
+            <!-- Product Price -->
+            <div class="form-group">
+                <label for="productPrice">Product Price:</label>
+                <input 
+                    type="number" 
+                    id="productPrice" 
+                    name="price" 
+                    required
+                >
+            </div>
+
+            <!-- Category Dropdown -->
+            <div class="form-group">
+                <label for="productCategory">Product Category:</label>
+                <select id="productCategory" name="category" required>
+                    <option value="" disabled selected>Select Category</option>
+                    <% categories.forEach(category => { %>
+                        <option value="<%= category._id %>"><%= category.name %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <!-- Image Upload and Crop Section -->
+            <div class="form-group">
+                <label for="productImages ">Product Images:</label>
+                <input type="file" id="productImages" name="images" multiple required>
+            </div>
+
+            <!-- Size Images -->
+            
+            
+            <div class="form-group">
+                <label for="productSize">Product Sizes:</label>
+                <div id="productSizeContainer">
+                    <input type="number" name="size[]" placeholder="Enter size (e.g., 8)" required>
+                </div>
+                <button type="button" id="addSizeButton">Add Another Size</button>
+            </div>
+
+            <!-- Color Images -->
+            <div class="form-group">
+                <label for="productColor">Product Color :</label>
+                <input type="text" id="productColor" name="color" required>
+            </div>
+
+            <div class="form-group">
+                <label for="productDiscount">Product Discount :</label>
+                <input type="text" id="productDiscount" name="discount" required>
+            </div> 
+
+            <!-- Highlights Images -->
+            <div class="form-group">
+                <label for="productHighlights">Product Highlights :</label>
+                <input type="text" id="productHighlights" name="highlights" multiple required>
+            </div>
+
+            <!-- Container for each image cropper -->
+            <div id="cropperContainer"></div>
+
+            <!-- Hidden input to store cropped image data -->
+            <input type="hidden" id="croppedImageData" name="croppedImageData">
+
+            <button type="submit">Add Product</button>
+        </form>
+
+        <!-- Preview of cropped images -->
+        <div id="preview"></div>
+    </div>
+
+    <!-- Include Cropper.js and JavaScript code -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    
+    <script>
+        let cropperList = [];  // Store cropper instances for multiple images
+        let croppedImages = [];  // Store data URLs of cropped images
+    
+        document.getElementById('productImages').addEventListener('change', function (e) {
+            const files = e.target.files; // Get all selected files
+            if (files && files.length > 0) {
+                // Clear any previous cropper content
+                document.getElementById('cropperContainer').innerHTML = '';
+                croppedImages = []; // Reset cropped images
+    
+                // Iterate through all selected files
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const imgSrc = event.target.result;
+    
+                        // Create a unique cropper container for each image
+                        const cropperWrapper = document.createElement('div');
+                        cropperWrapper.classList.add('cropper-wrapper');
+                        cropperWrapper.innerHTML = `
+                            <img id="imageToCrop${i}" src="${imgSrc}" style="max-width: 100%; max-height: 400px;">
+                            <button type="button" id="cropImageButton${i}">Crop Image</button>
+                        `;
+    
+                        // Append to the cropper container
+                        document.getElementById('cropperContainer').appendChild(cropperWrapper);
+    
+                        // Initialize Cropper for this image
+                        const image = document.getElementById(`imageToCrop${i}`);
+                        const cropper = new Cropper(image, {
+                            aspectRatio: 1, // Set the aspect ratio, e.g., 1 for square
+                            viewMode: 2,
+                        });
+    
+                        // Store the cropper instance
+                        cropperList.push(cropper);
+    
+                        // Handle the crop button click for each image
+                        document.getElementById(`cropImageButton${i}`).addEventListener('click', function () {
+                            const canvas = cropper.getCroppedCanvas();
+                            const croppedImageData = canvas.toDataURL('image/jpeg');
+    
+                            // Store cropped image data in hidden input (array of cropped images)
+                            croppedImages.push(croppedImageData);
+    
+                            // Display cropped image in preview area
+                            const preview = document.getElementById('preview');
+                            preview.innerHTML = ''; // Clear the preview
+                            croppedImages.forEach(imageData => {
+                                const img = document.createElement('img');
+                                img.src = imageData;
+                                img.height = 100;
+                                preview.appendChild(img);
+                            });
+    
+                            // Hide the cropper after cropping
+                            cropperWrapper.style.display = 'none';
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
+    
+        // When the form is submitted, include all cropped images in the form data
+        document.getElementById('productForm').addEventListener('submit', function (e) {
+            // Include all cropped images as hidden input
+            const croppedImageInput = document.getElementById('croppedImageData');
+            croppedImageInput.value = JSON.stringify(croppedImages); // Store as JSON string
+        });
+    
+        function validateForm() {
+            // Select all text and number inputs
+            const inputs = document.querySelectorAll("#productForm input[type='text'], #productForm input[type='number']");
+    
+            // Regular expression to check if the input starts with a capital letter
+            const startsWithCapital = /^[A-Z][a-zA-Z0-9\s]*$/;
+    
+            for (let input of inputs) {
+                // Validate for text inputs: Must start with a capital letter
+               
+    
+                // Validate for number inputs: Must not be negative
+                if (input.type === "number" && input.value < 0) {
+                    alert(`Please ensure that the input "${input.placeholder}" is not a negative number.`);
+                    input.focus();
+                    return false;
+                }
+            }
+    
+            // All validations passed
+            return true;
+        }
+    
+        // Attach the validateForm function to the form submission
+        document.getElementById("productForm").addEventListener("submit", function (e) {
+            if (!validateForm()) {
+                e.preventDefault(); // Prevent form submission if validation fails
+            }
+        });
+    
+        // Add new size input field when the "Add Another Size" button is clicked
+        document.getElementById('addSizeButton').addEventListener('click', function () {
+            const sizeContainer = document.getElementById('productSizeContainer');
+            
+            // Create new input for size
+            const newSizeInput = document.createElement('input');
+            newSizeInput.type = 'number';
+            newSizeInput.name = 'size[]';  // Array of sizes
+            newSizeInput.placeholder = 'Enter size (e.g., 9)';
+            newSizeInput.required = true;
+    
+            // Append new input to the container
+            sizeContainer.appendChild(newSizeInput);
+        });
+    </script>
+    
+</body>
+</html>
+
+

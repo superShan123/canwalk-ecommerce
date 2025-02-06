@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Coupon Management</title>
+    <link rel="stylesheet" href="/css/admincoupon.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h1>Admin Panel</h1>
+            <ul>
+                <li><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/customers">Customers</a></li>
+                <li><a href="/admin/product">Products</a></li>
+                <li><a href="/admin/categories">Categories</a></li>
+                <li><a href="/admin/order">Orders</a></li>
+                <li><a href="/admin/coupon" class="active">Coupons</a></li>
+                <li><a href="/admin/discounts">Discounts</a></li>
+                <li><a href="/admin/settings">Settings</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="container">
+                <h1>Coupon Management</h1>
+
+                <form action="/admin/coupon-add" method="POST">
+                    <h2>Add Coupon</h2>
+                    
+                    <label for="code">Code</label>
+                    <input type="text" name="code" id="code" required>
+
+                    <label for="discountType">Discount Type</label>
+                    <select name="discountType" id="discountType" required>
+                        <option value="percentage">Percentage</option>
+                        <option value="flat">Flat</option>
+                    </select>
+
+                    <label for="discount">Discount</label>
+                    <input type="number" name="discount" id="discount" required>
+
+                    <label for="minAmount">Minimum Amount</label>
+                    <input type="number" name="minAmount" id="minAmount" required>
+
+                    <label for="maxAmount">Maximum Amount</label>
+                    <input type="number" name="maxAmount" id="maxAmount" required>
+
+                    <label for="userLimit">User Limit</label>
+                    <input type="number" name="userLimit" id="userLimit" required>
+
+                    <label for="expiryDate">Expiry Date</label>
+                    <input type="date" name="expiryDate" id="expiryDate" required>
+
+                    <label for="description">Description</label>
+                    <input type="text" id="description" name="description">
+
+                    <button type="submit" class="btn">Add Coupon</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function validateForm(event) {
+            event.preventDefault(); // Prevent default form submission
+    
+            // Retrieve form values
+            const code = document.getElementById("code").value.trim();
+            const discountType = document.getElementById("discountType").value;
+            const discount = document.getElementById("discount").value.trim();
+            const minAmount = document.getElementById("minAmount").value.trim();
+            const maxAmount = document.getElementById("maxAmount").value.trim();
+            const userLimit = document.getElementById("userLimit").value.trim();
+            const expiryDate = document.getElementById("expiryDate").value;
+            const description = document.getElementById("description").value.trim();
+    
+            // Validation flags
+            let isValid = true;
+            let errorMessage = "";
+    
+            // Coupon code validation: must be alphanumeric without spaces
+            const codeRegex = /^[A-Za-z0-9]+$/;
+            if (!codeRegex.test(code)) {
+                isValid = false;
+                errorMessage += "Coupon code must be alphanumeric and contain no spaces.\n";
+            }
+    
+            // Discount validation: positive number
+            if (!discount || isNaN(discount) || parseFloat(discount) <= 0) {
+                isValid = false;
+                errorMessage += "Discount must be a positive number.\n";
+            }
+    
+            // Minimum amount validation: positive number
+            if (!minAmount || isNaN(minAmount) || parseFloat(minAmount) <= 0) {
+                isValid = false;
+                errorMessage += "Minimum amount must be a positive number.\n";
+            }
+    
+            // Maximum amount validation: greater than or equal to minimum amount
+            if (
+                !maxAmount || 
+                isNaN(maxAmount) || 
+                parseFloat(maxAmount) <= 0 || 
+                parseFloat(maxAmount) < parseFloat(minAmount)
+            ) {
+                isValid = false;
+                errorMessage += "Maximum amount must be a positive number and greater than or equal to the minimum amount.\n";
+            }
+    
+            // User limit validation: positive integer
+            if (!userLimit || isNaN(userLimit) || parseInt(userLimit) <= 0 || !Number.isInteger(Number(userLimit))) {
+                isValid = false;
+                errorMessage += "User limit must be a positive integer.\n";
+            }
+    
+            // Expiry date validation: must be in the future
+            const today = new Date().toISOString().split("T")[0];
+            if (!expiryDate || expiryDate <= today) {
+                isValid = false;
+                errorMessage += "Expiry date must be in the future.\n";
+            }
+    
+            // Description validation: optional, but limit to 200 characters
+            if (description.length > 200) {
+                isValid = false;
+                errorMessage += "Description must not exceed 200 characters.\n";
+            }
+    
+            // If validations fail, display error messages
+            if (!isValid) {
+                alert(errorMessage);
+                return false;
+            }
+    
+            // If validations pass, submit the form
+            document.querySelector("form").submit();
+        }
+    
+        // Attach the validation function to the form's submit event
+        document.querySelector("form").addEventListener("submit", validateForm);
+    </script>
+    
+</body>
+</html>
