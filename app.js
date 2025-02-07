@@ -19,7 +19,7 @@ const port = 8001;
 
 
 
-mongoose.connect('mongodb+srv://dBuser:shanleo10*@canwalk.zzpbp.mongodb.net/canwalk')  
+mongoose.connect(process.env.MONGO_URI)  
 .then(() => {
     console.log('MongoDB connected...');
 })
