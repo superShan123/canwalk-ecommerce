@@ -8,7 +8,7 @@ const initializePassport = () => {
             {
                 clientID: process.env.GOOGLE_CLIENT_ID,
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                callbackURL: "http://canwalk.today/auth/google/callback", // Update this URL
+                callbackURL: "https://canwalk.today/auth/google/callback", // Update this URL
             },
             async (accessToken, refreshToken, profile, done) => {
                 try {
