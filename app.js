@@ -13,7 +13,7 @@ const initializePassport = require("./middleware/googleauth");
 
 
 const app = express();
-const port = 8001;
+const port = 3000;
 
 
 
