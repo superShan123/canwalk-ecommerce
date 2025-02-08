@@ -8,7 +8,7 @@ const initializePassport = () => {
             {
                 clientID: process.env.GOOGLE_CLIENT_ID,
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                callbackURL: "https://canwalk.today/auth/google/callback",
+                callbackURL: "http://canwalk.today/auth/google/callback",
                 passReqToCallback: true // Pass `req` to the callback
             },
             async (req, accessToken, refreshToken, profile, done) => {
@@ -32,7 +32,7 @@ const initializePassport = () => {
                         if (err) return done(err);
                         return done(null, user);
                     });
-
+    
                 } catch (err) {
                     console.error("Error during Google authentication:", err);
                     return done(err, null);
