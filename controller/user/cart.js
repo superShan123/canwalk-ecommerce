@@ -175,9 +175,7 @@ const checkoutPage = async (req, res) => {
     // Fetch addresses
     const addresses = await AddressDB.find({ userId });
 
-    if (!addresses || addresses.length === 0) {
-      return res.redirect('/address');
-    }
+   
 
 // Fetch cart data with populated product details
     const userCart = await Cart.findOne({ userId }).populate({

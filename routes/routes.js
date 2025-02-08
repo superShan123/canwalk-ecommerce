@@ -67,6 +67,8 @@ router.get('/auth/google',
 router.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
+        req.session.userId = req.user._id;
+        console.log("Google session:", req.session);
         res.render('home/index');
     }
 );

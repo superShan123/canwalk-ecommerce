@@ -287,6 +287,8 @@ strong {
   }
 }
 
+
+
 /* Out of Stock Message */
 .out-of-stock-message {
   color: var(--error-color);
@@ -307,10 +309,14 @@ strong {
   
 
 
+
+
   <div class="product-container">
     <% if(message && message.length >0 ){ %>
-      <div class="message-container" style="color: red; font-weight: bold; margin-bottom: 20px"></div>
-      <%= message %>
+      <div class="message-container" style="color: red; font-weight: bold; margin-bottom: 20px">
+        <%= message %>
+      </div>
+      
 <% } %>
 
  <% if(product && product.images && product.images.length >0){ %>
@@ -419,74 +425,103 @@ strong {
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const sizeSelect = document.getElementById('size');
-      const errorMessage = document.getElementById('size-error');
-      const addToCartButtons = document.querySelectorAll('.add-to-cart'); // Multiple buttons support
-  
-      // Handle image zoom
-      const zoomContainer = document.getElementById('zoom-container');
-      const zoomedImage = document.getElementById('zoomed-image');
-      zoomContainer.addEventListener('mousemove', (e) => {
-        const rect = zoomContainer.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-        zoomedImage.style.transform = `scale(2) translate(-${x}%, -${y}%)`;
-      });
-  
-      zoomContainer.addEventListener('mouseleave', () => {
-        zoomedImage.style.transform = 'scale(1) translate(0, 0)';
-      });
-  
-      // Handle add to cart click event
-      addToCartButtons.forEach((button) => {
-        button.addEventListener('click', async (event) => {
-          const productId = button.getAttribute('data-product-id');
-          console.log('Product ID:', productId);
-  
-          // Check if size is selected
-          if (sizeSelect.value === "") {
-            errorMessage.style.display = 'block';  // Show error message
-            event.preventDefault();  // Prevent further action (button click submission)
-            return; // Stop execution if no size is selected
-          } else {
-            errorMessage.style.display = 'none';  // Hide error message if size is selected
-          }
-  
-          try {
-            console.log('Sending request to add item to cart...');
-            const response = await fetch('/add-to-cart', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ productId, quantity: 1 }),
-            });
-  
-            if (response.ok) {
-              const result = await response.json();
-              console.log('Product added to cart:', result);
-              window.location.href = "/cart"; // Navigate to cart page
-            } else {
-              const errorText = await response.text();
-              console.error('Server response:', errorText);
-              Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Failed to add product to cart. Please try again.',
-              });
-            }
-          } catch (error) {
-            console.error('Error during fetch request:', error);
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'Failed to add product to cart. Please try again.',
-            });
-          }
-        });
-      });
+    window.onload = function() {
+  // Image change function
+  window.changeImage = function(imageSrc, index) {
+    const zoomedImage = document.getElementById('zoomed-image');
+    zoomedImage.src = imageSrc;
+    
+    // Update active thumbnail
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    thumbnails.forEach((thumb, i) => {
+      if (i === index) {
+        thumb.classList.add('active');
+      } else {
+        thumb.classList.remove('active');
+      }
     });
+
+    // Reset zoom when changing image
+    zoomedImage.style.transform = 'scale(1)';
+  };
+
+  // Initialize zoom functionality
+  const zoomContainer = document.getElementById('zoom-container');
+  const zoomedImage = document.getElementById('zoomed-image');
+
+  if (zoomContainer && zoomedImage) {
+    zoomContainer.addEventListener('mousemove', function(e) {
+      const bounds = zoomContainer.getBoundingClientRect();
+      const mouseX = e.clientX - bounds.left;
+      const mouseY = e.clientY - bounds.top;
+      
+      const xPercent = (mouseX / bounds.width) * 100;
+      const yPercent = (mouseY / bounds.height) * 100;
+      
+      zoomedImage.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+      zoomedImage.style.transform = 'scale(2.5)';
+    });
+
+    zoomContainer.addEventListener('mouseleave', function() {
+      zoomedImage.style.transform = 'scale(1)';
+    });
+
+    zoomContainer.addEventListener('mouseenter', function() {
+      zoomedImage.style.transition = 'transform 0.2s ease-out';
+    });
+  }
+
+  // Add to cart functionality
+  const sizeSelect = document.getElementById('size');
+  const errorMessage = document.getElementById('size-error');
+  const addToCartButtons = document.querySelectorAll('.add-to-cart');
+
+  addToCartButtons.forEach((button) => {
+    button.addEventListener('click', async (event) => {
+      const productId = button.getAttribute('data-product-id');
+      
+      if (sizeSelect.value === "") {
+        errorMessage.style.display = 'block';
+        event.preventDefault();
+        return;
+      } else {
+        errorMessage.style.display = 'none';
+      }
+
+      try {
+        console.log('Sending request to add item to cart...');
+        const response = await fetch('/add-to-cart', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ productId, quantity: 1 }),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Product added to cart:', result);
+          window.location.href = "/cart";
+        } else {
+          const errorText = await response.text();
+          console.error('Server response:', errorText);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to add product to cart. Please try again.',
+          });
+        }
+      } catch (error) {
+        console.error('Error during fetch request:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to add product to cart. Please try again.',
+        });
+      }
+    });
+  });
+};
   </script>
   
 </body>
